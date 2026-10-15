@@ -1,0 +1,16 @@
+/* Chart-only variants. Never override v01 typography, colors, or other sections. */
+.v01 .results-figure { margin: 32px 0 0; padding: 0; width: 100%; background: #fff; }
+.v01 .results-figure img { width: 100%; height: auto; display: block; }
+.v01 .results-figure picture { display: block; }
+.v01 #results details { margin-top: 18px; }
+.v01 #results { scroll-margin-top: 70px; }
+@media(max-width:600px) {
+  .v01 .results-figure { margin-top: 27px; }
+  .v01 .results-figure img { aspect-ratio: 4.9 / 5.1; }
+  .v01.iteration .iteration-review { gap: 8px; padding-inline: 12px; }
+  .v01.iteration .iteration-review > span { font-size: 10px; }
+  .v01.iteration .iteration-review a { font-size: 10px; }
+}
+@media(max-width:359px) {
+  .v01.iteration .iteration-review > span { max-width: 70px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}

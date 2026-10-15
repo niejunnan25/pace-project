@@ -1,0 +1,328 @@
+/* All design exploration is local to the method section. */
+.v01.ms-isolated .page > :not(main),.v01.ms-isolated .body-content > section:not(#method){display:none}
+.v01.ms-isolated #method{margin-top:0;border-top:0}
+.v01 #method .method-study{--a:#8c74af;--soft:#f3eef8;--area:#cbbcdf;--line:#e5e1eb;--ink:#44404c;--muted:#84808c;color:var(--ink);font-family:'DM Sans',Arial,sans-serif;font-size:14px;line-height:1.65}
+.v01 #method .method-study [hidden]{display:none!important}
+.v01 #method .ms-topline{display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;color:#827e89;font-size:11px;line-height:1.6;margin-bottom:17px}
+.v01 #method .ms-topline small{font-size:11px}
+.v01 #method .ms-scenes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;border-bottom:1px solid #e8e5ec;padding-bottom:12px}
+.v01 #method .ms-scenes button{border:1px solid transparent;background:none;color:#8b8493;font-size:12px;line-height:1.5;padding:8px 15px;border-radius:6px}
+.v01 #method .ms-scenes button[aria-selected=true]{color:#70588d;background:#f4eff9;border-color:#e8dff0}
+.v01 #method .ms-board{min-width:0}
+.v01 #method .section-content > .method-description{margin:27px auto 0}
+.v01 #method .ms-heading{margin-bottom:24px}
+.v01 #method .ms-heading>span{display:block;font-size:10px;letter-spacing:.11em;font-weight:500;color:var(--muted);margin-bottom:10px}
+.v01 #method .ms-heading h3{font-size:25px;line-height:1.3;letter-spacing:-.035em;font-weight:500;color:var(--ink);margin:0}
+.v01 #method .ms-cell{min-width:0}
+.v01 #method .ms-cell h4{font-size:15px;line-height:1.5;margin:0 0 19px;font-weight:500;color:var(--ink)}
+.v01 #method .method-study p{font-size:13px;line-height:1.8;color:var(--muted);margin:17px 0 0}
+.v01 #method .method-study .ms-outcome{font-size:13px;text-align:center;color:#797181;line-height:1.8;margin:25px auto 0;max-width:780px}
+.v01 #method .ms-signal{min-width:0;width:100%;padding:0 9px;margin:0}
+.v01 #method .ms-signal-head{display:flex;justify-content:space-between;align-items:baseline;gap:5px 14px;flex-wrap:wrap;margin-bottom:9px;font-size:12px;line-height:1.5;color:var(--ink)}
+.v01 #method .ms-signal-head small{font-size:10px;color:var(--muted)}
+.v01 #method .ms-canvas{position:relative;width:100%;height:190px}
+.v01 #method .ms-canvas svg{display:block;width:100%;height:100%;overflow:hidden}
+.v01 #method .ms-canvas path{vector-effect:non-scaling-stroke}
+.v01 #method .ms-gridline{stroke:var(--line);stroke-width:.7;fill:none;opacity:.6}
+.v01 #method .ms-area{fill:var(--area);opacity:.2}
+.v01 #method .ms-speed{fill:none;stroke:#9aa4ae;stroke-width:2;stroke-linecap:round}
+.v01 #method .ms-speed-prefix{fill:none;stroke:var(--a);stroke-width:2.5;stroke-linecap:round}
+.v01 #method .ms-fixed-guide{fill:none;stroke:#afb4bb;stroke-width:1;stroke-dasharray:4 5}
+.v01 #method .ms-selected-guide{fill:none;stroke:var(--a);stroke-width:1;stroke-dasharray:2 5;opacity:.7}
+.v01 #method .ms-spot{position:absolute;width:6px;height:6px;border:1.3px solid #aeb3bb;border-radius:50%;background:#fff;transform:translate(-50%,-50%);pointer-events:none}
+.v01 #method .ms-spot.active{width:10px;height:10px;background:var(--a);border:2px solid #fff;box-shadow:0 0 0 4px var(--soft)}
+.v01 #method .ms-fixed-tag{position:absolute;top:0;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap}
+.v01 #method .ms-selected-tag{position:absolute;transform:translate(-50%,13px);font-size:10px;line-height:1.4;padding:3px 6px;background:var(--soft);border-radius:3px;color:var(--a);white-space:nowrap;z-index:1}
+.v01 #method .ms-ticks{position:relative;height:18px;font-size:10px;color:var(--muted)}
+.v01 #method .ms-ticks span{position:absolute;transform:translateX(-50%)}
+.v01 #method .ms-ticks span:first-child{transform:none}
+.v01 #method .ms-ticks span:last-child{transform:translateX(-100%)}
+.v01 #method .ms-axis-label{text-align:right;font-size:10px;color:var(--muted);margin-top:2px}
+.v01 #method .ms-signal.mini .ms-canvas{height:133px}
+.v01 #method .ms-signal.mini .ms-signal-head{font-size:11px}
+.v01 #method .ms-signal.mini .ms-signal-head small{font-size:9px}
+.v01 #method .ms-tracks{display:grid;gap:17px;margin-top:23px}
+.v01 #method .ms-action-row{display:grid;grid-template-columns:87px minmax(0,1fr);gap:16px;align-items:center;min-width:0}
+.v01 #method .ms-row-label{display:flex;flex-direction:column;gap:2px;font-size:11px;line-height:1.45;color:var(--muted)}
+.v01 #method .ms-row-label b{font-size:13px;font-weight:500;color:#687482}
+.v01 #method .ms-row-label span{font-size:10px;font-variant-numeric:tabular-nums}
+.v01 #method .pace .ms-row-label b{color:var(--a)}
+.v01 #method .ms-track{display:grid;grid-template-columns:repeat(50,minmax(0,1fr));gap:1.5px;height:23px;position:relative;border-radius:3px;min-width:0}
+.v01 #method .ms-track i{display:block;min-width:0;border-radius:1px;background:#edf0f3}
+.v01 #method .ms-track i.done{background:#aab5c0}
+.v01 #method .pace .ms-track i{background:var(--soft)}
+.v01 #method .pace .ms-track i.done{background:var(--a);opacity:.55}
+.v01 #method .ms-track::after{content:"";position:absolute;left:var(--prefix);top:-3px;bottom:-3px;border-left:2px solid #8a98a7}
+.v01 #method .pace .ms-track::after{border-color:var(--a)}
+.v01 #method .ms-track.ribbon{gap:0;height:20px;overflow:visible;background:#edf0f3}
+.v01 #method .ms-track.ribbon i{border-radius:0}
+.v01 #method .ms-track.ribbon i:first-child{border-radius:4px 0 0 4px}
+.v01 #method .ms-track.ribbon i:last-child{border-radius:0 4px 4px 0}
+.v01 #method .ms-aligned .ms-signal{margin-left:103px;width:calc(100% - 103px);padding:0}
+.v01 #method .ms-loop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:29px;color:var(--a)}
+.v01 #method .ms-loop>span{min-width:0;flex:1;border:1px solid var(--line);background:color-mix(in srgb,var(--soft) 35%,white);border-radius:6px;padding:14px 12px;text-align:center;font-size:12px;line-height:1.5}
+.v01 #method .ms-loop>b{font-size:16px;font-weight:400;opacity:.6}
+.v01 #method .ms-loop i{font-style:normal;margin-right:7px;font-size:16px}
+.v01 #method .ms-loop.compact{justify-content:center;gap:16px;border-top:1px solid var(--line);padding-top:19px;margin-top:28px}
+.v01 #method .ms-loop.compact>span{flex:none;background:none;border:0;padding:0;font-size:11px}
+.v01 #method .ms-number{color:var(--a);padding:15px 0}
+.v01 #method .ms-number>span,.v01 #method .ms-number>small{display:block;font-size:11px;color:var(--muted)}
+.v01 #method .ms-number>strong{display:block;font-size:58px;line-height:1.3;letter-spacing:-.055em;font-weight:500;color:var(--a)}
+.v01 #method .ms-number em{font-style:normal;font-size:.43em;letter-spacing:-.03em}
+.v01 #method .ms-input{min-width:0}
+.v01 #method .ms-input>span{display:block;color:var(--ink);font-size:13px;margin-bottom:13px}
+.v01 #method .ms-input small{display:block;color:var(--muted);font-size:10px;margin-top:10px}
+.v01 #method .ms-input-cells{display:grid;grid-template-columns:repeat(50,minmax(0,1fr));height:25px;gap:2px}
+.v01 #method .ms-input-cells i{background:#e0e5eb;border-radius:1px}
+.v01 #method .ms-steps{counter-reset:step;list-style:none;margin:0;padding:0;display:grid;gap:25px}
+.v01 #method .ms-steps li{position:relative;counter-increment:step;padding-left:29px}
+.v01 #method .ms-steps li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:1px;color:var(--a);font-size:10px}
+.v01 #method .ms-steps b{display:block;font-size:14px;font-weight:500;color:var(--ink);line-height:1.4}
+.v01 #method .ms-steps span{display:block;font-size:12px;color:var(--muted);line-height:1.75;margin-top:6px}
+.v01 #method .ms-candidates{display:grid;gap:10px}
+.v01 #method .ms-candidate{border:1px solid var(--line);border-radius:6px;padding:12px 15px;display:flex;flex-direction:column;gap:4px;background:#fff;min-width:0}
+.v01 #method .ms-candidate small{font-size:10px;color:var(--muted)}
+.v01 #method .ms-candidate b{font-size:14px;font-weight:500;color:var(--ink)}
+.v01 #method .ms-candidate span{font-size:10px;color:var(--muted)}
+.v01 #method .ms-candidate.selected,.v01 #method .ms-candidate.fallback{background:var(--soft);border-color:color-mix(in srgb,var(--a) 45%,white)}
+.v01 #method .ms-candidate.selected b,.v01 #method .ms-candidate.fallback b{color:var(--a)}
+.v01 #method .ms-candidate.not-reached{border-style:dashed;opacity:.65}
+.v01 #method .ms-candidates.horizontal{grid-template-columns:repeat(3,minmax(0,1fr));margin:21px 0}
+/* Each composition has its own hierarchy, not just a new palette. */
+.v01 #method .m01 .ms-board{border-block:1px solid var(--line);padding:26px 0 21px}
+.v01 #method .m01 .ms-heading{margin-left:103px}
+.v01 #method .m01 .ms-heading h3{font-size:29px}
+.v01 #method .ms-dual{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.v01 #method .m02{--a:#678e9b;--soft:#edf4f6;--area:#c4dce3}
+.v01 #method .ms-dual .ms-cell{border:1px solid var(--line);border-radius:9px;padding:23px 20px}
+.v01 #method .ms-dual .ms-cell:last-child{background:#f9fcfc;border-color:#cbdcdf}
+.v01 #method .ms-dual .ms-action-row{margin-top:21px;grid-template-columns:62px minmax(0,1fr);gap:10px}
+.v01 #method .ms-editorial{display:grid;grid-template-columns:255px minmax(0,1fr);gap:52px;padding:20px 0}
+.v01 #method .ms-editorial aside{border-right:1px solid var(--line);padding-right:31px}
+.v01 #method .ms-editorial .ms-heading h3{font-size:30px}
+.v01 #method .ms-editorial .ms-aligned .ms-signal{margin-left:0;width:100%}
+.v01 #method .ms-editorial .ms-action-row{grid-template-columns:1fr;gap:8px}
+.v01 #method .ms-editorial .ms-row-label{flex-direction:row;justify-content:space-between}
+.v01 #method .ms-story{display:grid;grid-template-columns:1fr 1.22fr 1.1fr;gap:18px}
+.v01 #method .m04{--a:#b28b69;--soft:#f8f2eb;--area:#ead2b9;--line:#e9e3dc}
+.v01 #method .ms-story .ms-cell{position:relative;background:#faf9f7;border-radius:9px;padding:22px 18px;border:1px solid var(--line)}
+.v01 #method .ms-story .ms-cell+.ms-cell::before{content:"→";position:absolute;left:-16px;top:55%;color:#bcab98;z-index:1}
+.v01 #method .ms-story .ms-action-row{grid-template-columns:1fr;gap:8px}
+.v01 #method .ms-story .ms-row-label{flex-direction:row;justify-content:space-between}
+.v01 #method .ms-story .ms-input-cells{grid-template-columns:repeat(10,1fr);height:auto;gap:5px}
+.v01 #method .ms-story .ms-input-cells i{height:17px;background:#e7e0d6}
+.v01 #method .ms-story .ms-signal-head small{display:none}
+.v01 #method .ms-lens{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:37px}
+.v01 #method .ms-lens>aside{border:1px solid var(--line);border-radius:12px;padding:23px 19px;background:linear-gradient(145deg,#faf8fe,#fff)}
+.v01 #method .ms-lens .ms-number{padding:5px 9px 0}
+.v01 #method .ms-lens .ms-number strong{font-size:42px}
+.v01 #method .ms-pipeline{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:25px;align-items:center;padding:28px 0}
+.v01 #method .ms-pipeline .ms-heading h3{font-size:21px}
+.v01 #method .ms-source,.v01 #method .ms-output{min-width:0}
+.v01 #method .ms-selector{min-width:0;padding:26px 17px;border:1px solid #daccdf;border-radius:16px;background:#faf7fc;position:relative}
+.v01 #method .ms-selector::before,.v01 #method .ms-selector::after{content:"→";position:absolute;top:48%;color:#9d8bae}
+.v01 #method .ms-selector::before{left:-22px}.v01 #method .ms-selector::after{right:-22px}
+.v01 #method .ms-selector .ms-number{padding:0 9px}.v01 #method .ms-selector .ms-number strong{font-size:40px}
+.v01 #method .ms-output .ms-action-row{grid-template-columns:1fr;gap:8px}
+.v01 #method .ms-output .ms-row-label{flex-direction:row;justify-content:space-between}
+.v01 #method .ms-output .ms-loop{flex-direction:column;gap:5px;align-items:flex-start}
+.v01 #method .ms-output .ms-loop>b{transform:rotate(90deg);margin-left:10px}
+.v01 #method .ms-vertical{padding-left:40px;position:relative;display:grid;gap:26px}
+.v01 #method .ms-vertical::before{content:"";position:absolute;left:11px;top:15px;bottom:35px;border-left:1px solid #d9cee6}
+.v01 #method .ms-vertical .ms-cell{position:relative;border-bottom:1px solid var(--line);padding:0 0 25px}
+.v01 #method .ms-vertical .ms-cell::before{content:"";position:absolute;left:-35px;top:5px;width:11px;height:11px;border:2px solid #b29ccb;border-radius:50%;background:#fff}
+.v01 #method .ms-vertical .ms-signal{max-width:690px}
+.v01 #method .ms-audit{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:38px}
+.v01 #method .m08{--a:#617a9a;--soft:#eff3f8;--area:#c9d6e6}
+.v01 #method .m08 .ms-heading,.v01 #method .m08 .ms-candidate,.v01 #method .m08 .ms-row-label{font-family:'IBM Plex Mono',monospace}
+.v01 #method .m08 .ms-board{background:#fcfdff;border:1px solid #dbe2ea;padding:27px;border-radius:3px}
+.v01 #method .m08 .ms-formula{font-family:Georgia,serif;text-align:center;font-size:16px}
+.v01 #method .ms-dark{--a:#d6c3fa;--soft:#3b3548;--area:#9383a9;--ink:#f0ebf7;--muted:#aaa1b7;--line:#4a4255;background:#27242e;border-radius:13px;padding:30px;color:var(--ink)}
+.v01 #method .ms-dark-head{display:flex;justify-content:space-between;gap:25px;align-items:center}
+.v01 #method .ms-dark .ms-number{padding:0 0 20px;min-width:142px}
+.v01 #method .ms-dark .ms-heading h3{font-size:31px}
+.v01 #method .ms-dark .ms-speed{stroke:#8c8796}
+.v01 #method .ms-dark .ms-spot{background:#39323f;border-color:#a69bb4}
+.v01 #method .ms-dark .ms-spot.active{background:var(--a);border-color:#322c3b}
+.v01 #method .ms-dark .ms-track i{background:#3b3843}
+.v01 #method .ms-dark .ms-track i.done{background:#898594}
+.v01 #method .ms-dark .pace .ms-track i.done{background:var(--a);opacity:.8}
+.v01 #method .ms-dark .ms-row-label b{color:#bbb6c6}
+.v01 #method .ms-dark .pace .ms-row-label b{color:var(--a)}
+.v01 #method .m10{--a:#69928b;--soft:#edf5f3;--area:#c8ded8}
+.v01 #method .m10 .ms-input{padding:21px;background:#f7faf9;border:1px solid #e0e9e6;border-radius:7px;margin-bottom:26px}
+.v01 #method .m10 .ms-tracks{gap:21px}
+.v01 #method .ms-under-signal{margin:30px 0 0 103px;border-top:1px solid var(--line);padding-top:23px}
+.v01 #method .ms-under-signal .ms-signal{padding:0}
+.v01 #method .ms-score-layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:40px;border:1px solid var(--line);padding:27px;border-radius:9px}
+.v01 #method .ms-score-layout aside{background:#f7f3fb;border-radius:8px;padding:25px 21px}
+.v01 #method .ms-score-layout .ms-heading h3{font-size:24px}
+.v01 #method .ms-score-layout .ms-number{padding:20px 0}
+.v01 #method .ms-score-layout .ms-number strong{font-size:67px}
+.v01 #method .ms-score-layout .ms-loop{gap:9px}
+.v01 #method .ms-score-layout .ms-loop>span{font-size:10px}
+.v01 #method .ms-panels{display:grid;grid-template-columns:1.15fr 1fr;gap:25px}
+.v01 #method .ms-panels .ms-cell{border:1px solid var(--line);padding:23px;border-radius:3px}
+.v01 #method .ms-panels .ms-cell:first-child{grid-row:span 2}
+.v01 #method .ms-panels .ms-cell:first-child .ms-canvas{height:260px}
+.v01 #method .ms-panels .ms-loop{flex-direction:column;align-items:stretch;margin-top:0}
+.v01 #method .ms-panels .ms-loop>b{transform:rotate(90deg);align-self:center}
+.v01 #method .ms-panels .ms-loop>span{padding:8px 11px;text-align:left;font-size:11px}
+.v01 #method .ms-cycle{display:grid;grid-template-columns:170px minmax(0,1fr) 170px;grid-template-areas:". policy ." "observe signal select" ". execute .";gap:24px;align-items:center;position:relative;padding:12px 0}
+.v01 #method .ms-cycle::before{content:"";position:absolute;inset:50px 73px 43px;border:1px dashed #d9cde6;border-radius:80px;pointer-events:none}
+.v01 #method .ms-cycle>div{position:relative;background:#fff;z-index:1;min-width:0}
+.v01 #method .cycle-policy{grid-area:policy;text-align:center;border:1px solid var(--line);border-radius:7px;padding:20px}
+.v01 #method .cycle-select{grid-area:select;border:1px solid var(--line);border-radius:7px;padding:20px}
+.v01 #method .cycle-execute{grid-area:execute;border:1px solid var(--line);border-radius:7px;padding:20px}
+.v01 #method .cycle-observe{grid-area:observe;border:1px solid var(--line);border-radius:7px;padding:20px}
+.v01 #method .cycle-signal{grid-area:signal;padding:19px 2px}
+.v01 #method .ms-cycle .ms-heading h3{font-size:18px;line-height:1.4}
+.v01 #method .ms-cycle .ms-heading{margin-bottom:0}
+.v01 #method .ms-cycle .ms-number strong{font-size:41px}
+.v01 #method .ms-cycle-reference{max-width:480px;margin:25px auto 0}
+.v01 #method .cycle-policy::after{content:"↓";position:absolute;right:-24px;bottom:-19px;color:#b9a8cb}
+.v01 #method .cycle-select::after{content:"↓";position:absolute;left:50%;bottom:-26px;color:#b9a8cb}
+.v01 #method .cycle-execute::after{content:"←";position:absolute;left:-23px;top:17px;color:#b9a8cb}
+.v01 #method .cycle-observe::after{content:"↑";position:absolute;left:50%;top:-29px;color:#b9a8cb}
+.v01 #method .ms-rulecards{display:grid;grid-template-columns:1fr 1.3fr;gap:26px;align-items:stretch}
+.v01 #method .ms-rulecards>div{border-radius:10px;padding:28px 24px;min-width:0}
+.v01 #method .ms-rule-fixed{border:1px solid #e2e6eb;background:#fafbfc}
+.v01 #method .ms-rule-pace{border:1px solid #dcd0e8;background:#faf7fd}
+.v01 #method .ms-rulecards .ms-heading h3{font-size:23px}
+.v01 #method .ms-equation{font:italic 48px/1.5 Georgia,serif;letter-spacing:-.035em;color:var(--a);margin:9px 0 22px}
+.v01 #method .ms-rule-fixed .ms-equation{color:#7c8794}
+.v01 #method .ms-rulecards .ms-action-row{margin-top:21px}
+.v01 #method .m15{--a:#353535;--soft:#f1f1f1;--area:#ddd;--line:#d9d9d9;--ink:#303030;--muted:#7c7c7c}
+.v01 #method .ms-print{border-top:2px solid #353535;border-bottom:1px solid #aaa;padding:28px 0 24px}
+.v01 #method .ms-print .ms-heading h3{font-family:Georgia,serif;font-size:32px;letter-spacing:-.02em}
+.v01 #method .ms-print .ms-heading{text-align:center}
+.v01 #method .ms-print .ms-signal{max-width:780px;margin:auto}
+.v01 #method .ms-print-rule{font:italic 18px/1.6 Georgia,serif;text-align:center;margin-top:26px}
+.v01 #method .ms-print .ms-area{display:none}
+.v01 #method .ms-print .ms-speed{stroke:#aaa}.v01 #method .ms-print .ms-track i.done{background:#888}
+.v01 #method .ms-print .pace .ms-track i.done{background:#333;opacity:1}
+.v01 #method .ms-walk{background:#fbf9fd;border:1px solid var(--line);border-radius:13px;padding:30px}
+.v01 #method .ms-walk-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}
+.v01 #method .ms-walk-tabs button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:12px 9px;font-size:13px;color:var(--muted)}
+.v01 #method .ms-walk-tabs button[aria-selected=true]{background:var(--soft);border-color:#bca7d2;color:var(--a)}
+.v01 #method .ms-walk-panel{min-height:320px;padding:13px 12px 4px}
+.v01 #method .ms-walk-panel>.ms-number{display:flex;align-items:center;gap:17px;flex-wrap:wrap;padding:13px 0 0}
+.v01 #method .ms-walk-panel>.ms-number strong{font-size:34px;order:-1}
+.v01 #method .ms-walk-panel>.ms-input{margin:52px 0}
+.v01 #method .ms-walk-panel>.ms-tracks{margin:43px 0 35px}
+.v01 #method .ms-branch{display:grid;grid-template-columns:1.3fr 1fr;gap:45px}
+.v01 #method .ms-branch>.ms-branch-chain{border-left:1px solid var(--line);padding-left:35px}
+.v01 #method .ms-branch .ms-input{margin-top:35px}
+.v01 #method .ms-start-node{font-size:13px;color:var(--a);margin-bottom:15px}
+.v01 #method .ms-branch .ms-candidates{gap:19px}
+.v01 #method .ms-branch .ms-candidate{position:relative}
+.v01 #method .ms-branch .ms-candidate.rejected+.ms-candidate::before{content:"↓";position:absolute;top:-20px;left:18px;color:#bdaccf}
+.v01 #method .ms-branch .ms-action-row{margin-top:24px}
+.v01 #method .m18{--a:#699385;--soft:#eef6f1;--area:#cee4d8;--line:#dfe9e4}
+.v01 #method .m18 .ms-board{padding:27px;border:1px solid var(--line);border-radius:12px}
+.v01 #method .m18 .ms-candidate{position:relative}
+.v01 #method .m18 .ms-candidates{gap:20px}
+.v01 #method .m18 .ms-candidate.rejected+.ms-candidate::before{content:"→";position:absolute;left:-18px;top:40%;color:var(--a);z-index:1}
+.v01 #method .ms-cases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.v01 #method .ms-case{border:1px solid var(--line);border-radius:9px;padding:19px 13px;min-width:0}
+.v01 #method .ms-case.chosen{border-color:#b59bcf;background:#fcfaff;box-shadow:0 0 0 2px #eee5f7}
+.v01 #method .ms-case h4{font-size:13px;font-weight:500;margin:0 0 21px;text-align:center}
+.v01 #method .ms-case .ms-signal-head{display:none}
+.v01 #method .ms-case .ms-number{text-align:center;padding-bottom:0}
+.v01 #method .ms-case .ms-number strong{font-size:35px}
+.v01 #method .ms-case .ms-number>span{font-size:10px}
+.v01 #method .ms-case-detail{max-width:710px;margin:29px auto 0}
+.v01 #method .ms-minimal{border-block:1px solid var(--line);padding:29px 0 21px}
+.v01 #method .ms-minimal-top{display:flex;justify-content:space-between;gap:30px;align-items:center;margin-bottom:17px}
+.v01 #method .ms-minimal-top .ms-heading{margin-bottom:0}
+.v01 #method .ms-minimal-top .ms-number{min-width:165px;padding:0;text-align:right}
+.v01 #method .ms-minimal .ms-canvas{height:151px}
+.v01 #method .ms-minimal-top .ms-number>span{display:none}
+.v01 #method .ms-minimal .ms-number strong{font-size:45px}
+@media(max-width:900px){
+ .v01 #method .ms-topline{display:block}.v01 #method .ms-topline small{display:block;margin-top:5px}
+ .v01 #method .ms-editorial{grid-template-columns:205px minmax(0,1fr);gap:27px}
+ .v01 #method .ms-editorial aside{padding-right:20px}
+ .v01 #method .ms-story,.v01 #method .ms-pipeline{grid-template-columns:1fr;gap:23px}
+ .v01 #method .ms-story .ms-cell+.ms-cell::before{content:"↓";left:50%;top:-25px}
+ .v01 #method .ms-story .ms-input-cells{grid-template-columns:repeat(25,1fr)}
+ .v01 #method .ms-story .ms-action-row{grid-template-columns:87px minmax(0,1fr)}
+ .v01 #method .ms-story .ms-row-label{flex-direction:column}
+ .v01 #method .ms-selector::before,.v01 #method .ms-selector::after{content:"↓";left:50%;right:auto;top:-25px}
+ .v01 #method .ms-selector::after{top:auto;bottom:-26px}
+ .v01 #method .ms-pipeline .ms-input-cells{height:21px}
+ .v01 #method .ms-output .ms-loop{flex-direction:row;align-items:center;flex-wrap:wrap}
+ .v01 #method .ms-output .ms-loop>b{transform:none;margin-left:0}
+ .v01 #method .ms-audit{grid-template-columns:minmax(0,1fr) 170px;gap:21px}
+ .v01 #method .ms-score-layout{grid-template-columns:195px minmax(0,1fr);gap:22px;padding:20px}
+ .v01 #method .ms-score-layout aside{padding:20px 15px}
+ .v01 #method .ms-score-layout .ms-heading h3{font-size:21px}
+ .v01 #method .ms-cycle{grid-template-columns:135px minmax(0,1fr) 135px;gap:18px}
+ .v01 #method .cycle-observe,.v01 #method .cycle-select{padding:14px}
+ .v01 #method .ms-cycle .ms-heading h3{font-size:16px}
+ .v01 #method .ms-cycle .ms-number strong{font-size:34px}
+ .v01 #method .ms-loop.compact{gap:10px;flex-wrap:wrap}
+ .v01 #method .ms-lens{gap:22px}.v01 #method .ms-lens>aside{padding:18px 10px}
+}
+@media(max-width:650px){
+ .v01 #method .ms-scenes{gap:3px;margin-bottom:23px}.v01 #method .ms-scenes button{font-size:11px;padding:8px 9px}
+ .v01 #method .ms-heading h3{font-size:23px}.v01 #method .ms-heading>span{font-size:9px}
+ .v01 #method .ms-signal-head{font-size:12px}.v01 #method .ms-signal-head small{font-size:9px}
+ .v01 #method .ms-canvas{height:175px}.v01 #method .ms-signal.mini .ms-canvas{height:140px}
+ .v01 #method .ms-action-row{grid-template-columns:1fr;gap:9px}
+ .v01 #method .ms-row-label{flex-direction:row;justify-content:space-between;align-items:center}
+ .v01 #method .ms-row-label span{font-size:11px}
+ .v01 #method .ms-track{height:20px;gap:1px}
+ .v01 #method .ms-aligned .ms-signal{margin-left:0;width:100%;padding:0}
+ .v01 #method .m01 .ms-heading{margin-left:0}.v01 #method .m01 .ms-heading h3{font-size:25px}
+ .v01 #method .ms-loop{gap:7px;flex-wrap:wrap}.v01 #method .ms-loop>span{font-size:11px;padding:10px 8px;flex-basis:25%}
+ .v01 #method .ms-loop i{display:none}
+ .v01 #method .ms-loop.compact{gap:6px 9px}.v01 #method .ms-loop.compact>span{font-size:10px;flex-basis:auto}
+ .v01 #method .ms-loop.compact>b{font-size:12px}
+ .v01 #method .ms-dual,.v01 #method .ms-editorial,.v01 #method .ms-lens,.v01 #method .ms-audit,.v01 #method .ms-score-layout,.v01 #method .ms-rulecards,.v01 #method .ms-branch,.v01 #method .ms-cases{grid-template-columns:1fr;gap:25px}
+ .v01 #method .ms-dual .ms-cell{padding:23px 15px}
+ .v01 #method .ms-dual .ms-action-row{grid-template-columns:1fr;gap:8px}
+ .v01 #method .ms-editorial{padding-top:0}
+ .v01 #method .ms-editorial aside{border-right:0;border-bottom:1px solid var(--line);padding:0 0 24px}
+ .v01 #method .ms-editorial .ms-heading h3{font-size:25px}
+ .v01 #method .ms-editorial .ms-steps{gap:18px}
+ .v01 #method .ms-editorial .ms-steps li{padding-left:26px}
+ .v01 #method .ms-story .ms-action-row{grid-template-columns:1fr}
+ .v01 #method .ms-story .ms-row-label{flex-direction:row}
+ .v01 #method .ms-story .ms-input-cells{grid-template-columns:repeat(10,1fr)}
+ .v01 #method .ms-lens>aside{padding:23px 15px}
+ .v01 #method .ms-lens .ms-number{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.v01 #method .ms-lens .ms-number strong{order:-1;font-size:34px}
+ .v01 #method .ms-vertical{padding-left:27px;gap:22px}
+ .v01 #method .ms-vertical::before{left:4px}.v01 #method .ms-vertical .ms-cell::before{left:-28px}
+ .v01 #method .ms-vertical .ms-cell h4{font-size:13px}
+ .v01 #method .m08 .ms-board,.v01 #method .m18 .ms-board{padding:20px 14px}
+ .v01 #method .ms-audit aside{border-top:1px solid var(--line);padding-top:20px}
+ .v01 #method .ms-dark{padding:25px 16px}
+ .v01 #method .ms-dark-head{display:block}.v01 #method .ms-dark .ms-heading h3{font-size:27px}
+ .v01 #method .ms-dark .ms-number{display:flex;align-items:center;gap:15px;flex-wrap:wrap;padding-bottom:24px}
+ .v01 #method .ms-dark .ms-number strong{font-size:38px;order:-1}
+ .v01 #method .ms-under-signal{margin-left:0}
+ .v01 #method .ms-score-layout{padding:19px 14px}
+ .v01 #method .ms-score-layout aside{padding:22px}
+ .v01 #method .ms-score-layout .ms-number{padding:10px 0}
+ .v01 #method .ms-panels{grid-template-columns:1fr;gap:18px}.v01 #method .ms-panels .ms-cell:first-child{grid-row:auto}
+ .v01 #method .ms-panels .ms-cell{padding:20px 14px}.v01 #method .ms-panels .ms-cell:first-child .ms-canvas{height:175px}
+ .v01 #method .ms-cycle{grid-template-columns:1fr;grid-template-areas:"policy" "signal" "select" "execute" "observe";gap:22px;padding:0}
+ .v01 #method .ms-cycle::before{display:none}
+ .v01 #method .ms-cycle>div{padding:20px}.v01 #method .cycle-signal{padding:6px!important}
+ .v01 #method .cycle-policy::after,.v01 #method .cycle-select::after,.v01 #method .cycle-execute::after{content:"↓";left:50%;top:auto;bottom:-23px;right:auto}
+ .v01 #method .cycle-observe::after{content:"↻";left:auto;right:20px;top:20px;font-size:22px}
+ .v01 #method .ms-cycle .ms-number{display:flex;align-items:center;gap:17px;flex-wrap:wrap;padding:12px 0 0}.v01 #method .ms-cycle .ms-number strong{order:-1}
+ .v01 #method .ms-rulecards>div{padding:24px 20px}
+ .v01 #method .ms-print .ms-heading h3{font-size:27px}
+ .v01 #method .ms-print-rule{font-size:17px}
+ .v01 #method .ms-walk{padding:24px 15px}.v01 #method .ms-walk-tabs{gap:6px}.v01 #method .ms-walk-tabs button{font-size:11px;padding:11px 5px}
+ .v01 #method .ms-walk-panel{padding-inline:0;min-height:310px}
+ .v01 #method .ms-branch>.ms-branch-chain{border-left:0;border-top:1px solid var(--line);padding:23px 0 0}
+ .v01 #method .ms-candidates.horizontal{grid-template-columns:1fr}
+ .v01 #method .m18 .ms-candidate.rejected+.ms-candidate::before{content:"↓";left:17px;top:-21px}
+ .v01 #method .ms-case .ms-signal-head{display:flex}.v01 #method .ms-case .ms-number{display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap}.v01 #method .ms-case .ms-number strong{order:-1}
+ .v01 #method .ms-minimal-top{display:block}.v01 #method .ms-minimal-top .ms-number{text-align:left;margin:19px 0 24px}.v01 #method .ms-minimal .ms-number strong{font-size:38px}
+ .v01 #method .ms-minimal .ms-canvas{height:175px}
+ .v01 #method .method-study .ms-outcome{font-size:12px;text-align:left}
+}
