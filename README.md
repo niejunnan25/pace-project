@@ -20,7 +20,7 @@ The entry point is `index.html`; all local assets use relative paths so the site
 
 ## Resource links
 
-- Code: https://github.com/niejunnan25/RoboTwin-PACE
+- Code: https://github.com/niejunnan25/PACE
 - Hugging Face: https://huggingface.co/niejunnan25/pi05-robotwin
 - Paper: temporarily uses the same Hugging Face URL.
 
