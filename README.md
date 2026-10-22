@@ -22,7 +22,9 @@ The entry point is `index.html`; all local assets use relative paths so the site
 
 - Code: https://github.com/niejunnan25/PACE
 - Hugging Face: https://huggingface.co/niejunnan25/pi05-robotwin
-- Paper: temporarily uses the same Hugging Face URL.
+- Paper: [PDF](assets/paper/PACE.pdf), hosted with this website.
+
+Replace `assets/paper/PACE.pdf` to publish an updated paper at the same URL.
 
 The hero and real-robot comparison images remain labeled video placeholders.
 
