@@ -454,3 +454,6 @@ pre .s { color: #f2b48c; }
 /* Match the canvas tint while the visualization data is still loading. */
 .hero:not(.effects-ready) .tint { background: rgba(128, 128, 128, .82); }
 .hero:not(.effects-ready) .strips { background: rgba(246, 245, 241, .58); }
+
+/* Static sections remain readable while the full-page scripts are pending. */
+.page-pending [data-reveal] { opacity: 1; transform: none; }

@@ -14,13 +14,13 @@ npx serve .
 
 ## Rebuild first-screen data
 
-After editing page data, `assets/js/hero.js`, `assets/js/media.js`, or an external CSS/JS asset, run:
+After editing page data, `assets/js/hero.js`, `assets/js/media.js`, `assets/js/page-loader.js`, or an external CSS/JS asset, run:
 
 ```bash
 python3 scripts/build-hero.py
 ```
 
-This regenerates static author information, the inline wall renderer, all wall curves, the media loader, and the small real-robot curve file. Wall speed samples use lossless signed-delta/varint encoding; the renderer decodes only selected queries and caches the result. All wall cards work before the full-page scripts arrive. The original `pace-chunks.js` remains the build source and is not requested by the page. Offscreen posters and video sources attach near the viewport; the overview film downloads when played. The script also adds content-based versions to external CSS/JS URLs so browsers can cache resources without mixing old scripts with new HTML. Rebuild before committing generated HTML; there is no runtime build step or service worker.
+This regenerates static author information, the inline wall renderer, all wall curves, the media loader, and the small real-robot curve file. Wall speed samples use lossless signed-delta/varint encoding; the renderer decodes only selected queries and caches the result. All wall cards work before the full-page scripts arrive. The original `pace-chunks.js` remains the build source and is not requested by the page. Offscreen posters and video sources attach near the viewport; the overview film downloads when played. Full-page scripts begin downloading after the first hero paint and the poster or first video frame is available, using browser idle time. Scrolling, navigation, keyboard browsing, and direct section links start those downloads immediately. Background playback also starts after the first paint; no stage waits for the complete video. The script also adds content-based versions to external CSS/JS URLs so browsers can cache resources without mixing old scripts with new HTML. Rebuild before committing generated HTML; there is no runtime build step or service worker.
 
 ## Publish with GitHub Pages
 

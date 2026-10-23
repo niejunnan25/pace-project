@@ -14,7 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f6f5f1">
 <link rel="icon" href="assets/favicon.svg">
-<link rel="stylesheet" href="style.css?v=38123d738fb0">
+<link rel="stylesheet" href="style.css?v=72fc672bc97b">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
 </header>
 
 <section class="hero" id="top" aria-label="PACE">
-  <video class="wall" id="wall" muted loop playsinline preload="auto" poster="assets/media/wall/wall-12x9.jpg" aria-hidden="true">
+  <video class="wall" id="wall" muted loop playsinline preload="none" poster="assets/media/wall/wall-12x9.jpg" aria-hidden="true">
     <source src="assets/media/wall/wall-12x9.mp4" type="video/mp4">
   </video>
   <canvas class="tint" id="tint" aria-hidden="true"></canvas>
@@ -65,6 +65,7 @@
   const button = document.getElementById('toggleWall');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let visible = true;
+  let painted = false;
   let userChoice = null;
   const wantsPlayback = () => userChoice === null ? !motion.matches : userChoice;
   function label() {
@@ -73,7 +74,7 @@
     button.setAttribute('aria-pressed', String(paused));
   }
   function sync() {
-    if (visible && !document.hidden && wantsPlayback()) {
+    if (painted && visible && !document.hidden && wantsPlayback()) {
       wall.play().then(label).catch(label);
     } else {
       wall.pause();
@@ -81,6 +82,7 @@
     }
   }
   button.addEventListener('click', () => {
+    painted = true;
     // A second click can cancel playback even while the first request buffers.
     userChoice = !(wantsPlayback() && !wall.paused);
     sync();
@@ -95,7 +97,16 @@
       sync();
     }, { threshold: 0.02 }).observe(hero);
   }
-  sync();
+  window.PACEFirstPaint = new Promise((resolve) => {
+    if (performance.getEntriesByType('paint').some((e) => e.name === 'first-contentful-paint')) { resolve(); return; }
+    if (window.PerformanceObserver && PerformanceObserver.supportedEntryTypes?.includes('paint')) {
+      const observer = new PerformanceObserver((list) => {
+        if (list.getEntries().some((e) => e.name === 'first-contentful-paint')) { observer.disconnect(); resolve(); }
+      });
+      observer.observe({ type: 'paint', buffered: true });
+    } else requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+  window.PACEFirstPaint.then(() => { painted = true; sync(); });
 })();
 </script>
 
@@ -306,7 +317,10 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
   hero.addEventListener('click', (e) => {
     if (hoverIdx < 0 || e.target.closest('.hero-card, .hero-foot')) return;
     const c = $('#task-' + tiles[hoverIdx].task);
-    if (!c) return;
+    if (!c) {
+      document.dispatchEvent(new CustomEvent('pace:navigate', { detail: { id: 'task-' + tiles[hoverIdx].task } }));
+      return;
+    }
     c.classList.remove('is-hidden'); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
     c.classList.add('flash'); setTimeout(() => c.classList.remove('flash'), 1800);
   });
@@ -600,9 +614,106 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
 </script>
 <!-- END GENERATED MEDIA -->
 
-<script defer src="assets/data/pace-data.js?v=967de58da0dd"></script>
-<script defer src="assets/data/pace-real-chunks.js?v=af58b5d7bac0"></script>
-<script defer src="assets/js/pace-kit.js?v=b7ffcb2d4dbf"></script>
-<script defer src="app.js?v=3be5e2b9383a"></script>
+<!-- BEGIN GENERATED PAGE LOADER -->
+<script>
+window.PACE_PAGE_SCRIPTS = ["assets/data/pace-data.js?v=967de58da0dd", "assets/data/pace-real-chunks.js?v=af58b5d7bac0", "assets/js/pace-kit.js?v=b7ffcb2d4dbf", "app.js?v=3be5e2b9383a"];
+/* Start full-page downloads after the first painted hero, or on browsing intent. */
+(function () {
+  const root = document.documentElement;
+  const urls = window.PACE_PAGE_SCRIPTS;
+  const wall = document.getElementById('wall');
+  const events = new AbortController();
+  const initialHash = location.hash;
+  let pending = null, ready = false, idle = null;
+  root.classList.add('page-pending');
+
+  function script(url) {
+    return new Promise((resolve, reject) => {
+      const el = document.createElement('script');
+      el.async = false;
+      el.src = url;
+      el.onload = resolve;
+      el.onerror = () => { el.remove(); reject(new Error('Could not load ' + url)); };
+      document.body.appendChild(el);
+    });
+  }
+  function start(reason) {
+    if (ready) return Promise.resolve();
+    if (pending) return pending;
+    if (idle !== null && window.cancelIdleCallback) cancelIdleCallback(idle);
+    root.dataset.pageLoadReason = reason;
+    root.dataset.pageState = 'loading';
+    // Fetch the app alongside its dependencies, but execute it only after they succeed.
+    if (!document.querySelector('link[data-page-app]')) {
+      const preload = document.createElement('link');
+      preload.rel = 'preload'; preload.as = 'script'; preload.href = urls[3];
+      preload.dataset.pageApp = ''; document.head.appendChild(preload);
+    }
+    pending = Promise.all(urls.slice(0, 3).map(script)).then(() => script(urls[3])).then(() => {
+      ready = true;
+      root.dataset.pageState = 'ready';
+      document.querySelectorAll('[data-reveal]').forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < innerHeight && r.bottom > 0) el.classList.add('is-in');
+      });
+      root.classList.remove('page-pending');
+      if (initialHash && initialHash !== '#top' && location.hash === initialHash) document.getElementById(decodeURIComponent(initialHash.slice(1)))?.scrollIntoView();
+      events.abort();
+    }).catch((error) => {
+      pending = null;
+      root.dataset.pageState = 'error';
+      // Keep static content readable; the next browsing action retries the scripts.
+      console.warn(error.message);
+    });
+    return pending;
+  }
+  const options = { passive: true, signal: events.signal };
+  window.addEventListener('scroll', () => { if (scrollY > 24) start('scroll'); }, options);
+  window.addEventListener('wheel', (e) => { if (e.deltaY > 0) start('scroll-intent'); }, options);
+  window.addEventListener('touchmove', () => start('scroll-intent'), options);
+  document.addEventListener('keydown', (e) => {
+    if (['PageDown', 'ArrowDown', 'End', ' '].includes(e.key) && !e.target.closest('input,textarea,button,a,[contenteditable]')) start('keyboard');
+  }, { signal: events.signal });
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (a && a.getAttribute('href') !== '#top') {
+      const hash = a.getAttribute('href');
+      start('navigation').then(() => {
+        if (location.hash === hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+  }, { signal: events.signal });
+  document.addEventListener('pace:navigate', (e) => {
+    const id = e.detail.id;
+    start('navigation').then(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+  }, { signal: events.signal });
+
+  // The poster or a decoded video frame is enough; never wait for the whole video.
+  const visual = new Promise((resolve) => {
+    let observer;
+    const done = () => { observer?.disconnect(); wall.removeEventListener('loadeddata', done); resolve(); };
+    const posterURL = new URL(wall.poster, document.baseURI).href;
+    wall.addEventListener('loadeddata', done, { once: true });
+    if (wall.readyState >= 2 || performance.getEntriesByName(posterURL).some((e) => e.responseEnd > 0)) { done(); return; }
+    if (window.PerformanceObserver && PerformanceObserver.supportedEntryTypes?.includes('resource')) {
+      observer = new PerformanceObserver((list) => {
+        if (list.getEntries().some((e) => e.name === posterURL && e.responseEnd > 0)) done();
+      });
+      observer.observe({ type: 'resource', buffered: true });
+    } else {
+      const poster = new Image();
+      poster.onload = done; poster.onerror = done; poster.src = wall.poster;
+    }
+  });
+  const painted = window.PACEFirstPaint;
+  if ((location.hash && location.hash !== '#top') || scrollY > 24) start('navigation');
+  Promise.all([painted, visual]).then(() => {
+    if (ready || pending) return;
+    if ('requestIdleCallback' in window) idle = requestIdleCallback(() => start('idle-after-hero'), { timeout: 1500 });
+    else start('after-hero');
+  });
+})();
+</script>
+<!-- END GENERATED PAGE LOADER -->
 </body>
 </html>

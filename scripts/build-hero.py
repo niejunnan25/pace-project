@@ -64,9 +64,17 @@ def main():
         page = re.sub(r'<!-- BEGIN GENERATED MEDIA -->.*?<!-- END GENERATED MEDIA -->', lambda _: media, page, flags=re.S)
     else:
         page = page.replace('</footer>', '</footer>\n' + media, 1)
-    for name in ['style.css', 'assets/data/pace-data.js', 'assets/data/pace-real-chunks.js', 'assets/js/pace-kit.js', 'app.js']:
-        version = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()[:12]
-        page = re.sub(r'((?:src|href)=")' + re.escape(name) + r'(?:\?v=[^"]*)?"', lambda m: m[1] + name + '?v=' + version + '"', page)
+    names = ['assets/data/pace-data.js', 'assets/data/pace-real-chunks.js', 'assets/js/pace-kit.js', 'app.js']
+    urls = [name + '?v=' + hashlib.sha256((ROOT / name).read_bytes()).hexdigest()[:12] for name in names]
+    loader = '<!-- BEGIN GENERATED PAGE LOADER -->\n<script>\nwindow.PACE_PAGE_SCRIPTS = ' + json.dumps(urls) + ';\n' + inline((ROOT / 'assets/js/page-loader.js').read_text()) + '</script>\n<!-- END GENERATED PAGE LOADER -->'
+    if '<!-- BEGIN GENERATED PAGE LOADER -->' in page:
+        page = re.sub(r'<!-- BEGIN GENERATED PAGE LOADER -->.*?<!-- END GENERATED PAGE LOADER -->', lambda _: loader, page, flags=re.S)
+    else:
+        for name in names:
+            page = re.sub(r'<script defer src="' + re.escape(name) + r'(?:\?v=[^"]*)?"></script>\n?', '', page)
+        page = page.replace('</body>', loader + '\n</body>', 1)
+    version = hashlib.sha256((ROOT / 'style.css').read_bytes()).hexdigest()[:12]
+    page = re.sub(r'href="style.css(?:\?v=[^"]*)?"', 'href="style.css?v=' + version + '"', page)
     (ROOT / 'index.html').write_text(page)
     print(f'Inline hero: {len(keys)} wall episodes; {len(gzip.compress(block.encode())):,} bytes gzip. HTML: {len(gzip.compress(page.encode())):,} bytes gzip.')
 

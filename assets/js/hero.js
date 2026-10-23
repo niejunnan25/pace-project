@@ -202,7 +202,10 @@
   hero.addEventListener('click', (e) => {
     if (hoverIdx < 0 || e.target.closest('.hero-card, .hero-foot')) return;
     const c = $('#task-' + tiles[hoverIdx].task);
-    if (!c) return;
+    if (!c) {
+      document.dispatchEvent(new CustomEvent('pace:navigate', { detail: { id: 'task-' + tiles[hoverIdx].task } }));
+      return;
+    }
     c.classList.remove('is-hidden'); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
     c.classList.add('flash'); setTimeout(() => c.classList.remove('flash'), 1800);
   });
