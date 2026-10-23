@@ -137,7 +137,7 @@
     video.addEventListener('play', () => requestAnimationFrame(tick));
     video.addEventListener('timeupdate', once);
     video.addEventListener('seeked', () => { last = -2; once(); });
-    cb(-1, null);
+    once();
   };
 
   /* Simulation clip (10 fps, frame n = env step n): active chunk index at the video's time. */
