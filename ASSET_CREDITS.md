@@ -1,10 +1,8 @@
 # Asset credits
 
-The page markup, styles, interaction code and illustrative method diagrams were written for PACE.
+The page markup, styles, interaction code and charts were written for PACE.
 
-- **PDF and GitHub icons:** [Font Awesome Free 6](https://github.com/FortAwesome/Font-Awesome), Fonticons, Inc., [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). SVG shapes are unchanged; accessibility attributes, size and color are set for this page. Original SVG comments and the [supplied license](assets/icons/FONT_AWESOME_LICENSE.txt) are retained.
-- **Hugging Face icon:** [official Hugging Face brand asset](https://huggingface.co/front/assets/huggingface_logo-noborder.svg), used to identify the resource link.
-- **DM Sans:** distributed through [Google Fonts](https://fonts.google.com/specimen/DM+Sans), under the [SIL Open Font License 1.1](assets/fonts/DM-Sans-OFL.txt). The local WOFF2 files are the Google Fonts Latin subsets.
-- **Photographs and result figures:** PACE manuscript assets. Photographs remain labeled layout samples; the paired images are not comparison recordings.
-- **Interactive method diagram:** original synthetic single-arm illustrations of the selection rule, not measured trajectories or experiment results.
-- **Chart typography:** SVG text was exported as outlines. No system Menlo font files are distributed.
+- **Paper, GitHub and Hugging Face links:** the GitHub mark is from [Font Awesome Free 6](https://github.com/FortAwesome/Font-Awesome), Fonticons, Inc., [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); the SVG shape is unchanged and its original comment is retained ([license](assets/icons/FONT_AWESOME_LICENSE.txt)). The Hugging Face icon is the [official brand asset](https://huggingface.co/front/assets/huggingface_logo-noborder.svg), used to identify the resource link. The other small icons were drawn for this page.
+- **Fonts:** the page uses system fonts (Futura, Avenir Next, Menlo where available). [DM Sans](https://fonts.google.com/specimen/DM+Sans), under the [SIL Open Font License 1.1](assets/fonts/DM-Sans-OFL.txt), is bundled as the fallback on systems without them.
+- **Videos:** recorded PACE rollouts from the PACE experiments: RoboTwin 2.0 simulation (selected successful rollouts, shown at 2×) and real ALOHA rollouts on RoboChallenge (real time). The overview film was rendered from the same recordings and logs.
+- **Numbers and curves:** taken from the camera-ready paper and recomputed from the archived rollout logs with the released `pace` module; curves show predicted joint-command speed, not measured robot velocity.
