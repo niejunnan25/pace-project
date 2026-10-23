@@ -115,7 +115,7 @@
     if (i === ci) return;
     ci = i; const c = F.chunks[i];
     $$('.chip', chips).forEach((b, k) => { b.classList.toggle('is-on', k === i); b.setAttribute('aria-selected', String(k === i)); });
-    $('#hval').innerHTML = `${c.H}<small>${c.executed < c.H ? `selected · ${c.executed} executed` : 'actions executed'}</small>`;
+    $('#hval').innerHTML = `${c.H}<small>${c.executed < c.H ? `selected · ${c.executed} executed` : 'actions selected'}</small>`;
     $('#why').innerHTML = why(c);
     $('#cells-note').textContent = c.executed < c.H ? `${c.H} selected · ${c.executed} executed · task complete` : `${c.H} selected · ${50 - c.H} discarded`;
     $$('.seg', tl).forEach((s, k) => s.classList.toggle('is-on', k === i));
@@ -175,8 +175,6 @@
       <span class="gain">+${gains[i].toFixed(1)}</span></div>`;
   }).join('') + `<div class="row" style="margin-top:2px"><span></span><span class="mono" style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink3)"><span>40%</span><span>70%</span><span>100%</span></span><span></span></div>`;
 
-  $('#phase').innerHTML = D.phase.rows.map((r) => `<div class="row"><span>${r[0]}</span><span class="t"><span class="p e" style="width:${r[4]}%"></span><span class="r" style="left:${r[6]}%" title="uniform random ${r[6]}%"></span></span><span class="v e">${r[4]}% <span style="color:var(--ink3)">/ ${r[6]}</span></span></div>`).join('')
-    + `<div class="hbar-legend"><span><i></i>uniform-random boundaries (same count)</span><span>${D.phase.overall.aligned} of ${D.phase.overall.valleys} boundaries matched</span></div>`;
   const fq = D.real.franka_queries, qmax = Math.max(...fq.map((r) => r[3]));
   $('#queries').innerHTML = fq.map((r) => `<div class="row"><span>${r[0].replace('Fixed ', '')} <span class="mono" style="color:var(--ink3);font-size:11px">${r[1]}/100</span></span><span class="t"><span class="p ${r[0] === 'PACE' ? 'e' : ''}" style="width:${(100 * r[3]) / qmax}%"></span></span><span class="v ${r[0] === 'PACE' ? 'e' : ''}">${r[3].toFixed(2)}</span></div>`).join('');
   $('#ablation').innerHTML = D.ablation.profile.map((r) => { const d = r[0].includes('default'); return `<div class="row"><span>${r[0].replace(' (default)', '')}</span><span class="t"><span class="p ${d ? 'e' : ''}" style="width:${(100 * r[2]) / 28}%"></span></span><span class="v ${d ? 'e' : ''}">${r[1]}% · ${r[2]}</span></div>`; }).join('')

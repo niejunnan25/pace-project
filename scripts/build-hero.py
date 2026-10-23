@@ -1,4 +1,4 @@
-"""Rebuild inline first-screen data/effects and version external assets after edits.
+"""Rebuild both language pages and version external assets after edits.
 
 Run from any directory: python3 scripts/build-hero.py
 The HTML stays usable before the full page data downloads.
@@ -13,8 +13,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-def data(name):
-    text = (ROOT / name).read_text()
+def data(name, root=ROOT):
+    text = (root / name).read_text()
     return json.loads(text[text.index('=') + 1:].strip().rstrip(';'))
 
 def inline(text):
@@ -40,17 +40,17 @@ def packed_episode(ep):
         packed.append([ch['t'], ch['H'], ch['trig'], contrast, base64.b64encode(buf).decode()])
     return packed
 
-def main():
-    d = data('assets/data/pace-data.js')
+def build(root):
+    d = data('assets/data/pace-data.js', root)
     chunks = data('assets/data/pace-chunks.js')
     wall = d['showcase']['wall']
     keys = {t['key'] for t in wall['tiles']}
     payload = {'wall': wall, 'sim': {k: packed_episode(chunks['sim'][k]) for k in sorted(keys)}}
     real = '/* Real-robot curves; the wall uses its inline lossless payload. */\nwindow.PACE_CHUNKS = ' + json.dumps({'sim': {}, 'real': chunks['real']}, separators=(',', ':')) + ';\n'
-    (ROOT / 'assets/data/pace-real-chunks.js').write_text(real)
-    source = (ROOT / 'assets/js/hero.js').read_text()
+    (root / 'assets/data/pace-real-chunks.js').write_text(real)
+    source = (root / 'assets/js/hero.js').read_text()
     block = '<!-- BEGIN GENERATED HERO -->\n<script>\nwindow.PACE_HERO = ' + inline(json.dumps(payload, separators=(',', ':'))) + ';\n' + inline(source) + '</script>\n<!-- END GENERATED HERO -->'
-    page = (ROOT / 'index.html').read_text()
+    page = (root / 'index.html').read_text()
     if '<!-- BEGIN GENERATED HERO -->' in page:
         page = re.sub(r'<!-- BEGIN GENERATED HERO -->.*?<!-- END GENERATED HERO -->', lambda _: block, page, flags=re.S)
     else:
@@ -65,7 +65,7 @@ def main():
     else:
         page = page.replace('</footer>', '</footer>\n' + media, 1)
     names = ['assets/data/pace-data.js', 'assets/data/pace-real-chunks.js', 'assets/js/pace-kit.js', 'app.js']
-    urls = [name + '?v=' + hashlib.sha256((ROOT / name).read_bytes()).hexdigest()[:12] for name in names]
+    urls = [name + '?v=' + hashlib.sha256((root / name).read_bytes()).hexdigest()[:12] for name in names]
     loader = '<!-- BEGIN GENERATED PAGE LOADER -->\n<script>\nwindow.PACE_PAGE_SCRIPTS = ' + json.dumps(urls) + ';\n' + inline((ROOT / 'assets/js/page-loader.js').read_text()) + '</script>\n<!-- END GENERATED PAGE LOADER -->'
     if '<!-- BEGIN GENERATED PAGE LOADER -->' in page:
         page = re.sub(r'<!-- BEGIN GENERATED PAGE LOADER -->.*?<!-- END GENERATED PAGE LOADER -->', lambda _: loader, page, flags=re.S)
@@ -73,10 +73,11 @@ def main():
         for name in names:
             page = re.sub(r'<script defer src="' + re.escape(name) + r'(?:\?v=[^"]*)?"></script>\n?', '', page)
         page = page.replace('</body>', loader + '\n</body>', 1)
-    version = hashlib.sha256((ROOT / 'style.css').read_bytes()).hexdigest()[:12]
+    version = hashlib.sha256((root / 'style.css').read_bytes()).hexdigest()[:12]
     page = re.sub(r'href="style.css(?:\?v=[^"]*)?"', 'href="style.css?v=' + version + '"', page)
-    (ROOT / 'index.html').write_text(page)
-    print(f'Inline hero: {len(keys)} wall episodes; {len(gzip.compress(block.encode())):,} bytes gzip. HTML: {len(gzip.compress(page.encode())):,} bytes gzip.')
+    (root / 'index.html').write_text(page)
+    print(f'{root.name}: {len(keys)} wall episodes; hero {len(gzip.compress(block.encode())):,} bytes gzip; HTML {len(gzip.compress(page.encode())):,} bytes gzip.')
 
 if __name__ == '__main__':
-    main()
+    for root in (ROOT, ROOT / 'zh'):
+        build(root)

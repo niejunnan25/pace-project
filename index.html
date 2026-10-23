@@ -4,29 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PACE · Phase-Aware Chunk Execution · NeurIPS 2026</title>
-<meta name="description" content="PACE executes each predicted action chunk up to its first prominent low-speed valley, then observes again. Training-free; 64.2% vs 57.8% on 50 RoboTwin 2.0 tasks.">
+<meta name="description" content="PACE selects how many predicted actions to execute before the next policy query. No policy retraining; evaluated on RoboTwin, real robots, and GR00T N1.7 on LIBERO.">
 <meta property="og:title" content="PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking">
-<meta property="og:description" content="Let the predicted motion decide when to look again. NeurIPS 2026.">
+<meta property="og:description" content="PACE selects how many predicted actions to execute before the next policy query. No policy retraining; evaluated on RoboTwin, real robots, and GR00T N1.7 on LIBERO.">
 <meta property="og:image" content="https://niejunnan25.github.io/pace-project/assets/media/wall/wall-12x9.jpg">
 <meta property="og:url" content="https://niejunnan25.github.io/pace-project/">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://niejunnan25.github.io/pace-project/">
+<link rel="alternate" hreflang="en" href="https://niejunnan25.github.io/pace-project/">
+<link rel="alternate" hreflang="zh-CN" href="https://niejunnan25.github.io/pace-project/zh/">
+<link rel="alternate" hreflang="x-default" href="https://niejunnan25.github.io/pace-project/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f6f5f1">
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" as="image" href="assets/media/wall/wall-12x9.webp" type="image/webp" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=72fc672bc97b">
+<link rel="stylesheet" href="style.css?v=38610b628186">
 </head>
 <body>
 
 <header class="topnav" id="topnav">
   <a class="brand" href="#top">PACE<span>.</span></a>
   <nav aria-label="Sections">
-    <a href="#film">Film</a><a href="#rule">The rule</a><a href="#results">Results</a><a href="#robots">Real robots</a><a href="#policies">Policies</a><a href="#use">Use it</a><a href="#cite">Cite</a>
+    <a href="#film">Film</a><a href="#rule">Method</a><a href="#results">Results</a><a href="#robots">Real robots</a><a href="#policies">Policy transfer</a><a href="#use">Get started</a><a href="#cite">Cite</a>
   </nav>
+  <div class="language-switch" aria-label="Page language"><a href="./" lang="en" aria-current="page">EN</a><a href="zh/" lang="zh">中文</a></div>
 </header>
 
 <section class="hero" id="top" aria-label="PACE">
+  <div class="language-switch" aria-label="Page language"><a href="./" lang="en" aria-current="page">EN</a><a href="zh/" lang="zh">中文</a></div>
   <video class="wall" id="wall" muted loop playsinline preload="none" poster="assets/media/wall/wall-12x9.webp" aria-hidden="true">
     <source src="assets/media/wall/wall-12x9.mp4" type="video/mp4">
   </video>
@@ -334,10 +339,10 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
   <section class="theatre" id="film">
     <div class="wrap">
       <div class="sec-head" data-reveal>
-        <span class="kicker">01 · Film</span>
+        <span class="kicker">01 · Video</span>
         <div>
-          <h2>See the rule work, then see it everywhere.</h2>
-          <p>One predicted chunk taken apart step by step (the rollout behind Figure 3 of the paper), then real ALOHA robots and simulated tasks.</p>
+          <h2>How PACE works</h2>
+          <p>An introduction to PACE, with demonstrations on real robots and in simulation.</p>
         </div>
       </div>
       <div class="screen" data-reveal>
@@ -348,9 +353,9 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
       <div class="chapters" id="chapters"></div>
 
       <div class="tldr" data-reveal>
-        <div><div class="num">50 <small>actions predicted</small></div><p>An action-chunking policy proposes the next 50 joint commands. How many should the robot actually run before it looks again?</p></div>
-        <div><div class="num"><em>H</em> <small>chosen per chunk</small></div><p>PACE reads the speed of the predicted motion and stops at its first prominent slow-down, where one motion phase hands over to the next.</p></div>
-        <div><div class="num">0 <small>extra training</small></div><p>No model internals, no extra samples, no retraining. One threshold per task, calibrated from the demonstrations the policy was trained on.</p></div>
+        <div><div class="num">50 <small>predicted actions</small></div><p>In the π₀.₅ experiments, each query predicts 50 joint commands, allowing the robot to execute several steps before querying the policy again.</p></div>
+        <div><div class="num"><em>H</em> <small>actions to execute</small></div><p>PACE selects H from the predicted speed profile, using the first valley that meets the contrast threshold.</p></div>
+        <div><div class="num">0 <small>additional training</small></div><p>PACE uses the predicted actions without accessing model internals or drawing additional policy samples. A task-specific threshold is calibrated from training demonstrations.</p></div>
       </div>
     </div>
   </section>
@@ -359,19 +364,19 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
   <section id="rule">
     <div class="wrap">
       <div class="sec-head" data-reveal>
-        <span class="kicker">02 · The rule</span>
+        <span class="kicker">02 · Method</span>
         <div>
-          <h2>Execute until the motion settles. Then look again.</h2>
-          <p>Below is the real rollout from Figure 3: <i>place_shoe</i>, episode 21. Every curve is computed from the policy's logged 50 × 14 action chunks with the released selector, and reproduces the logged horizons 32, 14, 37, 25, 19, 17.</p>
+          <h2>Choosing how many actions to execute</h2>
+          <p>The policy predicts an action chunk. PACE uses its speed profile to choose an execution length, then the robot executes that prefix and queries the policy with a new observation.</p>
         </div>
       </div>
       <div class="rule">
         <div data-reveal>
           <ol class="steps">
-            <li><b>Predict a chunk</b><span>The policy outputs 50 future joint commands for both arms, as usual.</span></li>
-            <li><b>Measure its speed</b><span>Per arm, the speed between consecutive commands, smoothed with a Savitzky–Golay filter (window 11, order 3).</span></li>
-            <li><b>Find the first real valley</b><span>A valley counts only if the speed first rose clearly above where the chunk started and then fell into it: contrast ≥ δ.</span></li>
-            <li><b>Execute, discard, observe</b><span>Run the prefix up to the earliest accepted valley of either arm, drop the rest, and query the policy on a fresh observation. No valley: run all 50.</span></li>
+            <li><b>Predict an action chunk</b><span>The policy outputs 50 joint commands for each arm.</span></li>
+            <li><b>Compute the speed profile</b><span>Compute speed from consecutive joint commands for each arm, then apply Savitzky–Golay smoothing (window 11, order 3).</span></li>
+            <li><b>Select a valley</b><span>For each arm, find the first valley whose contrast Δ meets the threshold δ.</span></li>
+            <li><b>Execute and replan</b><span>Use the earlier of the two arms’ selected boundaries. Execute that prefix, then query the policy with a new observation. If neither arm has a qualifying valley, execute all 50 actions.</span></li>
           </ol>
           <div class="eq" aria-label="Equations">
             <div><i>v</i><sub>j</sub> = <i>f</i><sub>s</sub> ‖<i>q</i><sub>j+1</sub> − <i>q</i><sub>j</sub>‖ &nbsp;<span class="c">speed per arm</span></div>
@@ -389,11 +394,11 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
 
               </video>
               <span class="badge" id="shoe-step">step 0</span>
-              <span class="badge right">real time</span>
+              <span class="badge right">1× speed</span>
             </div>
             <div class="readout">
               <div class="qchips" id="qchips" role="tablist" aria-label="Policy queries"></div>
-              <div class="h" id="hval">32<small>actions executed</small></div>
+              <div class="h" id="hval">32<small>actions selected</small></div>
               <div class="why" id="why"></div>
             </div>
           </div>
@@ -406,7 +411,7 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
           </div>
           <div class="replay-ctrl">
             <button class="chip is-on" id="play" type="button">Pause</button>
-            <span class="note">Predicted joint-command speed, not measured velocity. Right arm in orange, left arm in blue.</span>
+            <span class="note">Figure 3 · <i>place_shoe</i>, episode 21. The curves show predicted joint-command speeds: right arm in orange, left arm in blue.</span>
           </div>
         </div>
       </div>
@@ -419,8 +424,8 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
       <div class="sec-head" data-reveal>
         <span class="kicker">03 · Results</span>
         <div>
-          <h2>One rule. Fifty tasks.</h2>
-          <p>π<sub>0.5</sub> on all 50 RoboTwin 2.0 tasks, 900 episodes per task and method. Same checkpoint everywhere; only the execution rule changes.</p>
+          <h2>Evaluation on 50 RoboTwin tasks</h2>
+          <p>We evaluate π<sub>0.5</sub> on all 50 RoboTwin 2.0 tasks, with 900 episodes per task and execution method. For each task, all methods use the same checkpoint.</p>
         </div>
       </div>
       <div class="kpis" data-reveal>
@@ -432,31 +437,25 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
       <div class="grid2">
         <div class="panel bars" data-reveal>
           <h3>Average success over 50 tasks</h3>
-          <p class="sub">Mean over three evaluation seeds; whiskers show the seed SD.</p>
+          <p class="sub">Mean over three evaluation seeds; error bars show the standard deviation across seeds.</p>
           <div id="overall"></div>
         </div>
         <div class="card" data-reveal>
-          <h3>Same average length, different choices</h3>
-          <p class="sub">Fixed H set to PACE's rounded mean horizon on each task. Matching the average does not match PACE.</p>
+          <h3>Comparison at matched average horizons</h3>
+          <p class="sub">For each task, the fixed horizon is set to PACE’s rounded mean execution length. The plot compares success rates.</p>
           <div class="dumb" id="matched"></div>
           <div class="legend"><span><i style="background:var(--grey-dot)"></i>fixed H = PACE mean</span><span><i style="background:var(--acc)"></i>PACE</span></div>
         </div>
       </div>
-      <div class="grid3">
+      <div class="results-details">
         <div class="card" data-reveal>
-          <h3>Boundaries land on phase changes</h3>
-          <p class="sub">Blind human annotations, 89 successful rollouts, ±5 control steps.</p>
-          <div class="big"><em>79.7</em>%</div>
-          <div class="hbar" id="phase"></div>
-        </div>
-        <div class="card" data-reveal>
-          <h3>Fewer queries for the same success</h3>
+          <h3>Policy queries and success rate</h3>
           <p class="sub">Franka, place object on plate, queries per successful episode.</p>
           <div class="hbar" id="queries"></div>
           <p style="margin-top:14px">88/100 with PACE vs 87/100 with H = 5, using <b style="color:var(--ink)">84.6% fewer</b> policy queries.</p>
         </div>
         <div class="card" data-reveal>
-          <h3>Smoothing matters</h3>
+          <h3>Effect of speed-profile smoothing</h3>
           <p class="sub">Speed signal ablation, all 50 tasks (success · mean H).</p>
           <div class="hbar" id="ablation"></div>
           <p style="margin-top:14px">Smoothing removes noisy valleys and lets PACE keep longer prefixes; joint-space is the default.</p>
@@ -465,8 +464,8 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
 
       <div class="gal-head" id="tasks">
         <div>
-          <h3>Each task, its own rhythm</h3>
-          <p>Recorded PACE rollouts at 2×; the line under each clip marks its chunk boundaries. The numbers are the paper's per-task success rates for PACE and for the best fixed horizon (H = 5, 25 or 50). Selected successful rollouts, not a sample.</p>
+          <h3>Task demonstrations and results</h3>
+          <p>Videos play at 2× speed, with action-chunk boundaries marked below each clip. The success rates are from the paper’s per-task evaluation of PACE and the best fixed horizon (H = 5, 25, or 50).</p>
         </div>
       </div>
       <div class="gallery" id="gallery"></div>
@@ -479,21 +478,22 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
       <div class="sec-head" data-reveal>
         <span class="kicker">04 · Real robots</span>
         <div>
-          <h2>Long when the motion is smooth. Short where contact decides.</h2>
-          <p>Two RoboChallenge rollouts on ALOHA, in real time, with the horizon PACE logged at each query and, below each clip, that query's predicted speed (30 Hz) recomputed from the logged chunk. Stacking: 27, 30, 31 during approach and transport, 7 at the delicate alignment, 43 once it is resolved. Query numbers refer to these excerpts.</p>
+          <h2>Real-world manipulation</h2>
+          <p>We evaluate PACE on ALOHA and Franka robots. The videos show the ALOHA stacking and pen-placement tasks from RoboChallenge; results for all three tasks follow below.</p>
         </div>
       </div>
+      <p class="demo-note">Videos play at recorded speed. Numbers indicate the selected execution length; curves show the speed profile of the corresponding predicted action chunk.</p>
       <div class="robots">
         <div class="panel rclip" data-reveal data-clip="bowls">
           <div class="v"><video muted playsinline loop preload="none" data-src="assets/media/real/stack-bowls.mp4?v=65390e39b8af" data-poster="assets/media/real/stack-bowls.jpg?v=246094dfbe6a"></video><span class="tag"></span></div>
-          <h3>Stack bowls</h3><p class="sub">Paper success rollout (Fig. 5), 13-query excerpt.</p>
-          <div class="ribbon"></div><div class="ribbon-scale"><span>query 1</span><span>width ∝ time to next query</span><span>query 13</span></div>
+          <h3>Stack bowls</h3><p class="sub">ALOHA · RoboChallenge · Figure 5</p>
+          <div class="ribbon"></div><div class="ribbon-scale"><span>query 1</span><span>segment width = query interval</span><span>query 13</span></div>
           <div class="rcurve"><svg viewBox="0 0 520 64" preserveAspectRatio="none" aria-hidden="true"><rect class="ex" x="0" y="0" width="0" height="64"/><line class="base" x1="0" x2="520" y1="63.5" y2="63.5"/><path class="other"/><path class="trig"/><line class="cut" x1="0" x2="0" y1="0" y2="64"/></svg><div class="rnote"><span class="l"></span><span class="r"></span></div></div>
         </div>
         <div class="panel rclip" data-reveal data-clip="pen">
           <div class="v"><video muted playsinline loop preload="none" data-src="assets/media/real/put-pen.mp4?v=76562d71d57f" data-poster="assets/media/real/put-pen.jpg?v=812202a8f537"></video><span class="tag"></span></div>
-          <h3>Put a pen into its case</h3><p class="sub">Platform-scored 10/10 rollout, 15-query excerpt.</p>
-          <div class="ribbon"></div><div class="ribbon-scale"><span>query 1</span><span>width ∝ time to next query</span><span>query 15</span></div>
+          <h3>Put a pen into its case</h3><p class="sub">ALOHA · RoboChallenge</p>
+          <div class="ribbon"></div><div class="ribbon-scale"><span>query 1</span><span>segment width = query interval</span><span>query 15</span></div>
           <div class="rcurve"><svg viewBox="0 0 520 64" preserveAspectRatio="none" aria-hidden="true"><rect class="ex" x="0" y="0" width="0" height="64"/><line class="base" x1="0" x2="520" y1="63.5" y2="63.5"/><path class="other"/><path class="trig"/><line class="cut" x1="0" x2="0" y1="0" y2="64"/></svg><div class="rnote"><span class="l"></span><span class="r"></span></div></div>
         </div>
       </div>
@@ -507,7 +507,7 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
           <div class="objbars" id="objects"></div>
         </div>
         <div class="card" data-reveal>
-          <h3>Against more frequent replanning</h3>
+          <h3>Comparison with fixed horizons</h3>
           <p class="sub">Successes out of 100 and queries per successful episode.</p>
           <div class="table-wrap"><table id="frankaq"></table></div>
         </div>
@@ -519,14 +519,15 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
   <section id="policies" class="layer">
     <div class="wrap">
       <div class="sec-head" data-reveal>
-        <span class="kicker">05 · Other policies</span>
+        <span class="kicker">05 · Policy transfer</span>
         <div>
-          <h2>Same rule, different policy, different actions.</h2>
-          <p>GR00T N1.7 on all four LIBERO suites (40 tasks, 6,000 episodes per strategy). GR00T predicts 16-step Cartesian-delta chunks, so PACE reads the translational-delta norm instead of joint speed. Nothing is retrained.</p>
+          <h2>PACE with GR00T N1.7</h2>
+          <p>We apply PACE to GR00T N1.7 and evaluate it on 40 LIBERO tasks, without retraining the model. GR00T predicts end-effector displacement increments. PACE uses the magnitude of each translational increment as the motion signal to choose the execution length.</p>
         </div>
       </div>
       <div class="panel" style="padding:10px 18px" data-reveal><div class="table-wrap"><table id="libero"></table></div></div>
-      <p class="note" style="margin-top:14px">Mean ± sample SD over three seeds; bold marks the best mean per column. Selector time 0.0566 ± 0.0046 ms per query; PACE uses 10.53 queries per successful episode vs 9.69 for full-chunk H = 16.</p>
+      <p class="note" style="margin-top:14px">Four LIBERO suites, 6,000 episodes per execution method, and 16 predicted actions per chunk. Results are mean ± sample standard deviation across three seeds; bold indicates the highest mean in each column.</p>
+      <p class="note" style="margin-top:8px">PACE takes 0.0566 ± 0.0046 ms per query and uses 10.53 queries per successful episode, compared with 9.69 for full-chunk execution (H = 16).</p>
     </div>
   </section>
 
@@ -534,20 +535,25 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
   <section id="use" class="layer">
     <div class="wrap">
       <div class="sec-head" data-reveal>
-        <span class="kicker">06 · Use it</span>
+        <span class="kicker">06 · Getting started</span>
         <div>
-          <h2>Five lines between inference and execution.</h2>
-          <p>The standalone module needs only NumPy and SciPy. Calibrated thresholds for all 50 RoboTwin tasks and the π<sub>0.5</sub> evaluation code are released.</p>
+          <h2>Use PACE with your policy</h2>
+          <p>The standalone module depends on NumPy and SciPy. The release also includes calibrated thresholds for all 50 RoboTwin tasks and the π<sub>0.5</sub> evaluation code.</p>
         </div>
       </div>
       <div class="code" data-reveal>
-        <div><h3>Install</h3><pre id="install"></pre></div>
-        <div><h3>Use</h3><pre id="usage"></pre></div>
-      </div>
-      <div class="repo-links">
-        <a class="btn" href="https://github.com/niejunnan25/PACE">github.com/niejunnan25/PACE</a>
-        <a class="btn" href="https://github.com/niejunnan25/Openpi-PACE">Openpi-PACE · π₀.₅ server</a>
-        <a class="btn" href="https://huggingface.co/niejunnan25/pi05-robotwin">π₀.₅ RoboTwin checkpoints</a>
+        <div class="install-column">
+          <h3>Install</h3>
+          <pre id="install"></pre>
+          <div class="resource-space">
+            <div class="repo-links">
+              <a class="btn" href="https://github.com/niejunnan25/PACE"><svg viewBox="0 0 496 512" aria-hidden="true"><!-- Font Awesome Free 6.7.2 · github · CC BY 4.0 --><path d="M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/></svg>PACE code</a>
+              <a class="btn" href="https://github.com/niejunnan25/Openpi-PACE"><svg viewBox="0 0 496 512" aria-hidden="true"><!-- Font Awesome Free 6.7.2 · github · CC BY 4.0 --><path d="M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/></svg>OpenPI server</a>
+              <a class="btn" href="https://huggingface.co/niejunnan25/pi05-robotwin"><img src="assets/icons/huggingface.svg" alt="" width="16" height="16">Model weights</a>
+            </div>
+          </div>
+        </div>
+        <div class="usage-column"><h3>Usage</h3><pre id="usage"></pre></div>
       </div>
     </div>
   </section>
@@ -570,7 +576,6 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
 <footer>
   <div class="wrap">
     <span>PACE · NeurIPS 2026 · Peking University · JD Explore Academy</span>
-    <span>Contact <a href="mailto:hsf@pku.edu.cn">hsf@pku.edu.cn</a> · Supported by the Beijing Natural Science Foundation (IS26042)</span>
   </div>
 </footer>
 <!-- BEGIN GENERATED MEDIA -->
@@ -617,7 +622,7 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
 
 <!-- BEGIN GENERATED PAGE LOADER -->
 <script>
-window.PACE_PAGE_SCRIPTS = ["assets/data/pace-data.js?v=3c4d4a6da238", "assets/data/pace-real-chunks.js?v=65208b488ab0", "assets/js/pace-kit.js?v=1a28469ef271", "app.js?v=3be5e2b9383a"];
+window.PACE_PAGE_SCRIPTS = ["assets/data/pace-data.js?v=14dfe21b74d4", "assets/data/pace-real-chunks.js?v=65208b488ab0", "assets/js/pace-kit.js?v=1a28469ef271", "app.js?v=0ba3fe13de63"];
 /* Start full-page downloads after the first painted hero, or on browsing intent. */
 (function () {
   const root = document.documentElement;
@@ -716,5 +721,11 @@ window.PACE_PAGE_SCRIPTS = ["assets/data/pace-data.js?v=3c4d4a6da238", "assets/d
 })();
 </script>
 <!-- END GENERATED PAGE LOADER -->
+<script>
+// Keep the current section when switching page languages.
+document.querySelectorAll('.language-switch a').forEach(a => a.addEventListener('click', () => {
+  a.hash = location.hash;
+}));
+</script>
 </body>
 </html>
