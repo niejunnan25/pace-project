@@ -133,8 +133,7 @@
     tl.setAttribute('aria-valuenow', step);
   }
   function seekStep(step, play) {
-    shoe.currentTime = step / 10 + 0.001; update();
-    if (play && replayOn) shoe.play().catch(() => {});
+    window.PACESeekVideo(shoe, step / 10 + 0.001, play && replayOn); update();
   }
   shoe.addEventListener('timeupdate', update);
   shoe.addEventListener('seeked', update);
@@ -150,7 +149,7 @@
   });
   setChunk(0); update();
   new IntersectionObserver((es) => {
-    if (es[0].isIntersecting && replayOn && !K.reducedMotion()) shoe.play().catch(() => {}); else shoe.pause();
+    if (es[0].isIntersecting && replayOn && !K.reducedMotion()) { window.PACEPrepareVideo(shoe); shoe.play().catch(() => {}); } else shoe.pause();
   }, { threshold: 0.35 }).observe($('.replay'));
   if (K.reducedMotion()) { replayOn = false; $('#play').textContent = 'Play'; $('#play').classList.remove('is-on'); }
 
@@ -191,7 +190,7 @@
     const gain = +(v[5] - fixed[0]).toFixed(1);
     const q = c.query_steps, spans = q.map((s, j) => (j + 1 < q.length ? q[j + 1] : c.steps) - s);
     const el = K.el('article', { class: 'tcard', id: 'task-' + c.task, 'data-gain': gain, 'data-steps': c.steps, 'data-label': c.label });
-    el.innerHTML = `<div class="v"><video muted playsinline loop preload="none" data-src="${c.file}" poster="${c.poster.replace('.jpg', '@2x.jpg')}" aria-label="${c.label}, recorded PACE rollout"></video>
+    el.innerHTML = `<div class="v"><video muted playsinline loop preload="none" data-src="${c.file}" data-poster="${c.poster.replace('.jpg', '@2x.jpg')}" aria-label="${c.label}, recorded PACE rollout"></video>
         <div class="strip">${spans.map((s) => `<i style="flex:${s}"></i>`).join('')}</div><span class="hq">Q1/${q.length} · H <em>${c.H[0]}</em></span></div>
       <div class="meta"><b>${c.label}</b><span class="nums"><span>PACE <em>${v[5].toFixed(1)}%</em></span><span class="${gain >= 0 ? 'pos' : 'neg'}">${gain >= 0 ? '+' : '−'}${Math.abs(gain).toFixed(1)}</span></span><span>best fixed ${fixed[0].toFixed(1)}% at H = ${fixed[1]}</span></div>`;
     gal.appendChild(el);
@@ -212,6 +211,7 @@
     vid.addEventListener('seeked', update);
     return el;
   });
+  window.PACEObserveMedia(gal);
   K.autoplayVisible($$('video', gal), { rate: 2, threshold: 0.4 });
 
   /* ---------------------------------------------------------------- real robots */
@@ -224,7 +224,7 @@
     qs.forEach((q, k) => {
       const dur = (k + 1 < qs.length ? qs[k + 1].t : clip.duration) - q.t;
       const i = K.el('i', { style: `width:calc(${(100 * dur) / clip.duration}% - 3px)`, title: `Query ${q.q} · H = ${q.H}` }, String(q.H));
-      i.addEventListener('click', () => { vid.currentTime = q.t + 0.02; vid.play().catch(() => {}); });
+      i.addEventListener('click', () => { window.PACESeekVideo(vid, q.t + 0.02, true); });
       rib.appendChild(i);
     });
     const items = $$('i', rib);

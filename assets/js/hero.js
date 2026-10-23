@@ -30,23 +30,30 @@
     return { step, i, done: false };
   };
 
-  /* Per-chunk predicted speed for wall / band / real clips (needs assets/data/pace-chunks.js).
-     episodeChunks(tile) -> {task, episode, steps, thr, chunks:[{t, H, trig, L, R, vL, vR, aL, aR}]} or null.
-     L/R are milli-rad/s integers; use chunkProfile() to get plain numbers. */
-  K.episodeChunks = (t) => {
-    const C = window.PACE_CHUNKS || window.PACE_HERO;
-    return C ? C.sim[t.key || `${t.task}|${t.episode}|${t.steps}`] || null : null;
+  // Decode only the selected query, then reuse it. Stored samples are lossless.
+  const decoded = new Map();
+  K.episodeChunks = (t) => window.PACE_HERO.sim[t.key];
+  K.chunkProfile = (ch) => {
+    if (decoded.has(ch)) return decoded.get(ch);
+    const bytes = atob(ch[4]);
+    let offset = 0;
+    const arm = () => {
+      let prev = 0;
+      return Array.from({ length: 49 }, () => {
+        let n = 0, shift = 0, byte;
+        do { byte = bytes.charCodeAt(offset++); n |= (byte & 127) << shift; shift += 7; } while (byte & 128);
+        prev += n & 1 ? -(n + 1) / 2 : n / 2;
+        return prev / 1000;
+      });
+    };
+    const prof = { _p: true, t: ch[0], H: ch[1], trig: ch[2], contrast: ch[3] === null ? null : ch[3] / 10000, L: arm(), R: arm() };
+    decoded.set(ch, prof);
+    return prof;
   };
-  K.realChunks = (name) => (window.PACE_CHUNKS ? window.PACE_CHUNKS.real[name] || null : null);
-  K.chunkProfile = (ch) => (ch._p ? ch : {
-    _p: true, t: ch.t, H: ch.H, trig: ch.trig, aL: ch.aL, aR: ch.aR,
-    L: ch.L.map((v) => v / 1000), R: ch.R.map((v) => v / 1000),
-    vL: ch.vL.map(([k, c]) => [k, c / 10000]), vR: ch.vR.map(([k, c]) => [k, c / 10000]),
-  });
   /* SVG path strings for a chunk (raw or profiled) in a w x h box; each arm scaled to its own peak.
      x(k) = k / 50 * w so the valley at index k sits on the boundary after k actions. */
   K.chunkPaths = (ch, w, h, pad = 2) => {
-    const prof = K.chunkProfile(ch);
+    const prof = ch._p ? ch : K.chunkProfile(ch);
     const x = (k) => (k / 50) * w;
     const mk = (arr) => {
       const mx = Math.max(...arr, 1e-9);
@@ -102,20 +109,19 @@
     const ep = K.episodeChunks(tl);
     if (!ep) { sparkKey = ''; SP.svg.style.display = 'none'; SP.note.textContent = ''; return; }
     SP.svg.style.display = '';
-    const ci = st.done ? ep.chunks.length - 1 : Math.min(st.i, ep.chunks.length - 1);
+    const ci = st.done ? ep.length - 1 : Math.min(st.i, ep.length - 1);
     const key = tl.i + ':' + ci;
     if (key !== sparkKey) {
       sparkKey = key;
-      const prof = K.chunkProfile(ep.chunks[ci]), paths = K.chunkPaths(prof, SW, SH, 3), trigR = prof.trig !== 'L';
+      const prof = K.chunkProfile(ep[ci]), paths = K.chunkPaths(prof, SW, SH, 3), trigR = prof.trig !== 'L';
       SP.trig.setAttribute('d', trigR ? paths.R : paths.L);
       SP.other.setAttribute('d', trigR ? paths.L : paths.R);
       SP.cut.setAttribute('x1', paths.cut); SP.cut.setAttribute('x2', paths.cut);
       SP.ex.setAttribute('width', paths.cut);
       const arr = trigR ? prof.R : prof.L;
       sparkP = { prof, arr, mx: Math.max(...arr, 1e-9) };
-      const vv = (trigR ? prof.vR : prof.vL).find((v) => v[0] === prof.H);
       SP.note.textContent = prof.trig
-        ? `${prof.trig === 'R' ? 'right' : 'left'}-arm valley · Δ ${fmtC(vv && vv[1])} ≥ δ · cut ${prof.H} of 50`
+        ? `${prof.trig === 'R' ? 'right' : 'left'}-arm valley · Δ ${fmtC(prof.contrast)} ≥ δ · cut ${prof.H} of 50`
         : `no accepted valley · H = ${prof.H} (full chunk)`;
     }
     const p = sparkP, k = st.done ? p.prof.H : Math.max(0, Math.min(p.prof.H, st.step - p.prof.t)), kk = Math.min(p.arr.length - 1, k);

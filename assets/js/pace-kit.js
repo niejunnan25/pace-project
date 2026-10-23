@@ -94,7 +94,7 @@
     if (K.reducedMotion()) return;
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       const v = e.target;
-      if (e.isIntersecting) { if (v.dataset.src && !v.src) { v.src = v.dataset.src; } v.play().catch(() => {}); } else v.pause();
+      if (e.isIntersecting && e.intersectionRatio >= threshold) { if (v.dataset.src && !v.src) { v.src = v.dataset.src; } v.play().catch(() => {}); } else v.pause();
     }), { threshold });
     list.forEach((v) => io.observe(v));
     return io;
@@ -105,7 +105,7 @@
     container.innerHTML = '';
     const btns = chapters.map((c, i) => {
       const b = K.el('button', { type: 'button', class: 'chapter', 'data-t': c[0] }, label(c, i));
-      b.addEventListener('click', () => { video.currentTime = c[0] + 0.05; video.play().catch(() => {}); });
+      b.addEventListener('click', () => { window.PACESeekVideo(video, c[0] + 0.05, true); });
       container.appendChild(b);
       return b;
     });
