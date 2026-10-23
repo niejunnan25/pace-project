@@ -12,6 +12,16 @@ npx serve .
 
 `python3 -m http.server` also serves the page, but it ignores Range requests, so seeking in the film only works within the buffered part.
 
+## Rebuild first-screen data
+
+After editing page data, `assets/js/hero.js`, or an external CSS/JS asset, run:
+
+```bash
+python3 scripts/build-hero.py
+```
+
+This regenerates static author information, the inline wall renderer and a small set of initial curve data in `index.html`. The initial card and playback work before the full-page data arrives. Remaining curves become available when the full data loads. The script also adds content-based versions to external CSS/JS URLs so browsers can cache resources without mixing old scripts with new HTML. Rebuild before committing generated HTML; there is no runtime build step or service worker.
+
 ## Publish with GitHub Pages
 
 In **Settings → Pages**, select **Deploy from a branch**, the `main` branch and `/(root)`. The entry point is `index.html`; all assets use relative paths, so the site works under the project subdirectory.
