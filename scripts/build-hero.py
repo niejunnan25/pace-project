@@ -1,4 +1,4 @@
-"""Rebuild both language pages and version external assets after edits.
+"""Rebuild inline first-screen data/effects and version external assets after edits.
 
 Run from any directory: python3 scripts/build-hero.py
 The HTML stays usable before the full page data downloads.
@@ -79,5 +79,4 @@ def build(root):
     print(f'{root.name}: {len(keys)} wall episodes; hero {len(gzip.compress(block.encode())):,} bytes gzip; HTML {len(gzip.compress(page.encode())):,} bytes gzip.')
 
 if __name__ == '__main__':
-    for root in (ROOT, ROOT / 'zh'):
-        build(root)
+    build(ROOT)

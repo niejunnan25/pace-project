@@ -2,8 +2,6 @@
 
 Static homepage for **PACE: Phase-Aware Chunk Execution for Robot Policies with Action Chunking** (NeurIPS 2026), served by GitHub Pages at https://niejunnan25.github.io/pace-project/.
 
-The default homepage is in English. The Chinese version is at https://niejunnan25.github.io/pace-project/zh/; the language switch preserves the current section.
-
 ## Preview
 
 Any static server works; use one that supports HTTP Range requests so the overview film can seek, for example:
@@ -15,8 +13,6 @@ npx serve .
 `python3 -m http.server` also serves the page, but it ignores Range requests, so seeking in the film only works within the buffered part.
 
 ## Rebuild first-screen data
-
-The build command updates both languages. Each page has its own text, styles, and interaction labels; media, fonts, the PDF, and the source motion curves are shared.
 
 After editing page data, `assets/js/hero.js`, `assets/js/media.js`, `assets/js/page-loader.js`, or an external CSS/JS asset, run:
 
@@ -35,7 +31,6 @@ In **Settings → Pages**, select **Deploy from a branch**, the `main` branch an
 | Path | Content |
 |---|---|
 | `index.html`, `style.css`, `app.js` | The page ("Light" design). |
-| `zh/` | Chinese page and localized data/scripts; videos and other large assets use `../assets/`. |
 | `assets/data/pace-data.js` | Every number and text block shown on the page: camera-ready abstract and tables, the Figure 3 chunks recomputed with `pace.core.select_horizon` (H = 32, 14, 37, 25, 19, 17), fixed-horizon sweeps, clip manifests, BibTeX. |
 | `assets/data/pace-chunks.js` | Smoothed predicted joint-command speed per arm for every clip on the video wall and both real-robot clips, recomputed from the logged action chunks; every recomputed horizon equals the logged one. |
 | `assets/js/pace-kit.js` | Small helpers: PACE's selection rule, video sync, copy buttons. |

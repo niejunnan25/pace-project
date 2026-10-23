@@ -11,14 +11,11 @@
 <meta property="og:url" content="https://niejunnan25.github.io/pace-project/">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://niejunnan25.github.io/pace-project/">
-<link rel="alternate" hreflang="en" href="https://niejunnan25.github.io/pace-project/">
-<link rel="alternate" hreflang="zh-CN" href="https://niejunnan25.github.io/pace-project/zh/">
-<link rel="alternate" hreflang="x-default" href="https://niejunnan25.github.io/pace-project/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f6f5f1">
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" as="image" href="assets/media/wall/wall-12x9.webp" type="image/webp" fetchpriority="high">
-<link rel="stylesheet" href="style.css?v=896ed8291598">
+<link rel="stylesheet" href="style.css?v=b5d66a952e28">
 </head>
 <body>
 
@@ -27,11 +24,9 @@
   <nav aria-label="Sections">
     <a href="#film">Film</a><a href="#rule">Method</a><a href="#results">Results</a><a href="#robots">Real robots</a><a href="#policies">Policy transfer</a><a href="#use">Get started</a><a href="#cite">Cite</a>
   </nav>
-  <div class="language-switch" aria-label="Page language"><a href="./" lang="en" aria-current="page">EN</a><a href="zh/" lang="zh">中文</a></div>
 </header>
 
 <section class="hero" id="top" aria-label="PACE">
-  <div class="language-switch" aria-label="Page language"><a href="./" lang="en" aria-current="page">EN</a><a href="zh/" lang="zh">中文</a></div>
   <video class="wall" id="wall" muted loop playsinline preload="none" poster="assets/media/wall/wall-12x9.webp" aria-hidden="true">
     <source src="assets/media/wall/wall-12x9.mp4" type="video/mp4">
   </video>
@@ -355,7 +350,7 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
       <div class="tldr" data-reveal>
         <div><div class="num">50 <small>predicted actions</small></div><p>In the π₀.₅ experiments, each query predicts 50 joint commands, allowing the robot to execute several steps before querying the policy again.</p></div>
         <div><div class="num"><em>H</em> <small>actions to execute</small></div><p>PACE selects H from the predicted speed profile, using the first valley that meets the contrast threshold.</p></div>
-        <div><div class="num">0 <small>additional training</small></div><p>PACE uses the predicted actions without accessing model internals or drawing additional policy samples. A task-specific threshold is calibrated from training demonstrations.</p></div>
+        <div><div class="num">0 <small>additional training</small></div><p>PACE uses the predicted actions without accessing model internals or drawing additional policy samples.</p></div>
       </div>
     </div>
   </section>
@@ -374,7 +369,7 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
         <div data-reveal>
           <ol class="steps">
             <li><b>Predict an action chunk</b><span>The policy outputs 50 joint commands for each arm.</span></li>
-            <li><b>Compute the speed profile</b><span>Compute speed from consecutive joint commands for each arm, then apply Savitzky–Golay smoothing (window 11, order 3).</span></li>
+            <li><b>Compute the speed profile</b><span>Compute speed from consecutive joint commands for each arm, then apply Savitzky–Golay smoothing.</span></li>
             <li><b>Select a valley</b><span>For each arm, find the first valley whose contrast Δ meets the threshold δ.</span></li>
             <li><b>Execute and replan</b><span>Use the earlier of the two arms’ selected boundaries. Execute that prefix, then query the policy with a new observation. If neither arm has a qualifying valley, execute all 50 actions.</span></li>
           </ol>
@@ -384,7 +379,6 @@ window.PACE_HERO = {"wall":{"file":"assets/media/wall/wall-12x9.mp4","poster":"a
             <div>Δ(<i>r</i>) = min{ <i>m</i>(<i>r</i>) − <i>ṽ</i><sub>1</sub>, <i>m</i>(<i>r</i>) − <i>ṽ</i><sub>r</sub> } &nbsp;<span class="c">contrast</span></div>
             <div><i>h</i> = min{ <i>r</i> : Δ(<i>r</i>) ≥ δ } &nbsp;or&nbsp; <i>H</i><sub>max</sub></div>
           </div>
-          <div class="config"><span>L = 50</span><span>H_max = 50</span><span>f_s = 50 Hz</span><span>min spacing 10</span><span>δ = 5th pct. of demos</span><span>grippers excluded</span></div>
         </div>
 
         <div class="panel replay" data-reveal>
@@ -721,11 +715,5 @@ window.PACE_PAGE_SCRIPTS = ["assets/data/pace-data.js?v=14dfe21b74d4", "assets/d
 })();
 </script>
 <!-- END GENERATED PAGE LOADER -->
-<script>
-// Keep the current section when switching page languages.
-document.querySelectorAll('.language-switch a').forEach(a => a.addEventListener('click', () => {
-  a.hash = location.hash;
-}));
-</script>
 </body>
 </html>
