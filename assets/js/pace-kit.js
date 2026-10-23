@@ -161,7 +161,7 @@
      L/R are milli-rad/s integers; use chunkProfile() to get plain numbers. */
   K.episodeChunks = (t) => {
     const C = window.PACE_CHUNKS;
-    return C ? C.sim[`${t.task}|${t.episode}|${t.steps}`] || null : null;
+    return C ? C.sim[t.key || `${t.task}|${t.episode}|${t.steps}`] || null : null;
   };
   K.realChunks = (name) => (window.PACE_CHUNKS ? window.PACE_CHUNKS.real[name] || null : null);
   K.chunkProfile = (ch) => (ch._p ? ch : {

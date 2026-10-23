@@ -447,6 +447,6 @@ pre .s { color: #f2b48c; }
 .limits figure img { box-shadow: 0 12px 32px rgba(40, 36, 24, .08); }
 
 /* Light / Dark iteration: lean hero foot, slightly smaller film */
-.hero-foot { justify-content: flex-end; }
+.hero-foot { justify-content: flex-end; padding-right: 32px; }
 .screen, .chapters { width: 90%; margin-left: auto; margin-right: auto; }
-@media (max-width: 820px) { .hero-foot { justify-content: flex-start; } .screen, .chapters { width: 100%; } }
+@media (max-width: 820px) { .hero-foot { align-items: flex-end; padding-right: 20px; } .screen, .chapters { width: 100%; } }

@@ -35,7 +35,7 @@
 
   /* ---------------------------------------------------------------- video wall */
   const wall = $('#wall'), cv = $('#strips'), ctx = cv.getContext('2d'), tint = $('#tint'), tctx = tint.getContext('2d'), spot = $('#spot');
-  const W = D.walls.w108, tiles = W.tiles, card = $('.hero-card');
+  const W = D.showcase ? D.showcase.wall : D.walls.w108, tiles = W.tiles, card = $('.hero-card');
   let showStrips = true, spotIdx = -1, hoverIdx = -1, nextSpotAt = 0, heroVisible = true, tintKey = '';
   let G = { w: 0, h: 0, s: 1, ox: 0, oy: 0, tw: 0, th: 0 };
 
@@ -173,9 +173,6 @@
     if (!c) return;
     c.classList.remove('is-hidden'); c.scrollIntoView({ behavior: 'smooth', block: 'center' });
     c.classList.add('flash'); setTimeout(() => c.classList.remove('flash'), 1800);
-  });
-  $('#toggleStrips').addEventListener('click', (e) => {
-    showStrips = !showStrips; e.currentTarget.classList.toggle('is-on', showStrips); e.currentTarget.setAttribute('aria-pressed', String(showStrips));
   });
   $('#toggleWall').addEventListener('click', (e) => {
     const b = e.currentTarget;
@@ -339,7 +336,7 @@
   /* ---------------------------------------------------------------- gallery */
   const rows = Object.fromEntries(D.full50.rows.map((r) => [r.task, r]));
   const gal = $('#gallery');
-  const cards = D.clips.map((c) => {
+  const cards = (D.showcase ? D.showcase.clips : D.clips).map((c) => {
     const r = rows[c.task], v = r.v, fixed = [[v[0], 5], [v[1], 25], [v[2], 50]].sort((a, b) => b[0] - a[0])[0];
     const gain = +(v[5] - fixed[0]).toFixed(1);
     const q = c.query_steps, spans = q.map((s, j) => (j + 1 < q.length ? q[j + 1] : c.steps) - s);
