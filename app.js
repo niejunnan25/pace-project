@@ -49,18 +49,39 @@
   });
   const head = K.el('div', { class: 'head' }); tl.appendChild(head);
 
+  /* Plain-language reason for the boundary: one main sentence, a two-arm comparison, then the
+     threshold detail in small grey text. Candidate lists stay on the chart, not in the prose. */
+  const fmtD = (d) => (d < 1 ? d.toFixed(3) : d.toFixed(2));
   function why(c) {
-    const parts = c.arms.slice().reverse().map((a) => {
-      const name = a.arm === 'right' ? 'Right arm' : 'Left arm';
-      const acc = a.valleys.find((v) => v.k === a.accepted);
-      const rej = a.valleys.filter((v) => a.accepted == null || v.k < a.accepted).filter((v) => v.contrast != null);
-      const rejTxt = rej.length ? `, after rejecting ${rej.map((v) => `${v.k} (Δ ${v.contrast.toFixed(3)})`).join(', ')}` : '';
-      return acc ? `<b>${name}</b>: valley at <span class="em">${acc.k}</span>, Δ ${acc.contrast.toFixed(acc.contrast < 1 ? 3 : 2)} ≥ δ${rejTxt}.`
-        : `<b>${name}</b>: no accepted valley${rejTxt}.`;
+    const delta = F.threshold;
+    const arms = ['right', 'left'].map((n) => c.arms.find((a) => a.arm === n));
+    const name = (a) => (a.arm === 'right' ? 'Right arm' : 'Left arm');
+    const trig = arms.find((a) => a.accepted === c.H);
+    const other = arms.find((a) => a !== trig);
+    let main;
+    if (!trig) main = `Neither arm slows down clearly, so PACE runs all ${c.H} actions.`;
+    else if (c.executed < c.H) main = `<b>${name(trig)}</b> slows down clearly at step <span class="em">${c.H}</span>, so PACE selects ${c.H} actions; the task succeeds after ${c.executed}.`;
+    else main = `<b>${name(trig)}</b> slows down clearly at step <span class="em">${c.H}</span>, so PACE runs ${c.H} actions.`;
+    const armTxt = (a) => (a.accepted == null ? `${name(a)} —` : a === trig ? `${name(a)} ${a.accepted} ✓` : `${name(a)} ${a.accepted} (later)`);
+    const compare = trig ? `${armTxt(trig)} · ${armTxt(other)}` : `${armTxt(arms[0])} · ${armTxt(arms[1])}`;
+    // Earlier candidates on the triggering arm, and the other arm if it never qualifies.
+    const reasons = [];
+    if (trig) {
+      const acc = trig.valleys.find((v) => v.k === trig.accepted);
+      reasons.push(`${name(trig).toLowerCase()} Δ = ${fmtD(acc.contrast)}`);
+      const early = trig.valleys.filter((v) => v.k < trig.accepted && v.contrast != null);
+      const flat = early.filter((v) => v.contrast === 0).map((v) => v.k);
+      const shallow = early.filter((v) => v.contrast > 0).map((v) => v.k);
+      if (flat.length) reasons.push(`earlier dip${flat.length > 1 ? 's' : ''} at ${flat.join(' and ')} had no rise before ${flat.length > 1 ? 'them' : 'it'}`);
+      if (shallow.length) reasons.push(`earlier dip${shallow.length > 1 ? 's' : ''} at ${shallow.join(' and ')} too shallow`);
+    }
+    const quiet = (trig ? [other] : arms).filter((a) => a.accepted == null);
+    quiet.forEach((a) => {
+      const ds = a.valleys.filter((v) => v.contrast != null).map((v) => v.contrast);
+      if (ds.length) reasons.push(`${name(a).toLowerCase()} dips stay below δ (Δ ≤ ${fmtD(Math.max(...ds))})`);
     });
-    let tail = ` Earliest boundary: <b>H = ${c.H}</b>.`;
-    if (c.executed < c.H) tail += ` The task succeeded after <b>${c.executed}</b> of them.`;
-    return parts.join(' ') + tail;
+    const detail = `Threshold δ = ${fmtD(delta)}; ${reasons.join('; ')}.`;
+    return `<span class="why-main">${main}</span><span class="why-arms">${compare}</span><span class="why-detail">${detail}</span>`;
   }
 
   function chart(c) {
@@ -94,8 +115,9 @@
         }
         const cx = x(v.k), cy = y(a.smooth[v.k]);
         svg.appendChild(K.svg('circle', { cx, cy, r: accepted ? 5.5 : 4, fill: accepted ? col : T.dotFill, stroke: accepted ? col : T.faint, 'stroke-width': 1.5, opacity: accepted && !used ? .65 : 1 }));
-        const tx = K.svg('text', { x: cx, y: cy - 10, 'text-anchor': 'middle', class: 'tick', fill: accepted ? (used ? col : T.faint2) : T.faint });
-        tx.textContent = accepted ? (used ? `Δ ${v.contrast < 1 ? v.contrast.toFixed(3) : v.contrast.toFixed(2)} ✓` : `${v.k} · later`) : `Δ ${v.contrast.toFixed(3)}`;
+        if (!accepted) return;  // rejected candidates: hollow dot only, no Δ label
+        const tx = K.svg('text', { x: cx, y: cy - 10, 'text-anchor': 'middle', class: 'tick', fill: used ? col : T.faint2 });
+        tx.textContent = used ? `Δ ${fmtD(v.contrast)} ✓` : `${v.k} · later`;
         svg.appendChild(tx);
       });
     });

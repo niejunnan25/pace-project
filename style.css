@@ -200,6 +200,10 @@ section + section { border-top: 1px solid var(--line); }
 .readout .why { font-size: 14.5px; color: var(--ink2); line-height: 1.5; min-height: 66px; }
 .readout .why b { color: var(--ink); font-weight: 600; }
 .readout .why .em { color: var(--acc2); }
+.readout .why > span { display: block; }
+.readout .why .why-main { font-size: 16px; line-height: 1.45; color: var(--ink2); }
+.readout .why .why-arms { margin-top: 6px; font: 500 12.5px/1.5 var(--mono); color: var(--ink2); }
+.readout .why .why-detail { margin-top: 4px; font-size: 13px; line-height: 1.45; color: var(--ink3); }
 .qchips { display: flex; flex-wrap: wrap; gap: 6px; }
 .qchips .chip { height: 30px; }
 .chart { margin-top: 16px; }
